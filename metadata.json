@@ -1,0 +1,6 @@
+{
+  "name": "Last Bite - Real-Time Surplus Food Rescue",
+  "description": "Hyper-local surplus food marketplace rescuing canceled delivery orders, kitchen mistakes, and end-of-day food at steep discounts with real-time zero-ghost order locks.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
