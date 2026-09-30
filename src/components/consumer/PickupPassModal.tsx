@@ -41,7 +41,7 @@ export function PickupPassModal({
         particleCount: 50,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ['#f59e0b', '#10b981', '#ffffff'],
+        colors: ['#ff6b00', '#00e599', '#ffb020'],
       });
     } catch {
       // ignore

@@ -11,6 +11,7 @@ import {
   Info
 } from 'lucide-react';
 import type { Listing } from '@/src/lib/types/database';
+import { ST_JOHNS_CENTER } from '@/src/lib/data/stJohns';
 
 interface RadarMapProps {
   listings: Listing[];
@@ -118,8 +119,8 @@ export function RadarMap({
         {/* Interactive Radar Pins for Surplus Listings */}
         {listings.map((item) => {
           const merchant = item.merchant;
-          const lat = merchant?.latitude ?? 37.765;
-          const lon = merchant?.longitude ?? -122.42;
+          const lat = merchant?.latitude ?? ST_JOHNS_CENTER.lat;
+          const lon = merchant?.longitude ?? ST_JOHNS_CENTER.lng;
           const coords = getCanvasCoords(lat, lon);
           const isSelected = selectedPin?.id === item.id;
           const isReserved = item.status === 'reserved';

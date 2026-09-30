@@ -10,6 +10,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import type { Listing } from '@/src/lib/types/database';
+import { ST_JOHNS_CENTER } from '@/src/lib/data/stJohns';
 
 export interface LiveMapProps {
   listings: Listing[];
@@ -23,10 +24,7 @@ export interface LiveMapProps {
 }
 
 // St. John's, Newfoundland & Labrador downtown default coordinates
-export const ST_JOHNS_DEFAULT = {
-  lat: 47.5615,
-  lng: -52.7126,
-};
+export const ST_JOHNS_DEFAULT = ST_JOHNS_CENTER;
 
 export function LiveMap({
   listings,
@@ -208,8 +206,8 @@ export function LiveMap({
     } else {
       const circle = L.circle([currentCoords.lat, currentCoords.lng], {
         radius: 15000,
-        color: '#f59e0b',
-        fillColor: '#f59e0b',
+        color: '#ff6b00',
+        fillColor: '#ff6b00',
         fillOpacity: 0.04,
         weight: 1.5,
         dashArray: '4, 8',

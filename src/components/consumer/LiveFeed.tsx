@@ -20,6 +20,7 @@ import {
 import type { Listing, SurplusReason } from '@/src/lib/types/database';
 import { RadarMap } from '@/src/components/map/RadarMap';
 import { LeafletSurplusMap } from '@/src/components/consumer/LeafletSurplusMap';
+import { ST_JOHNS_CENTER, ST_JOHNS_RESTAURANTS } from '@/src/lib/data/stJohns';
 
 interface LiveFeedProps {
   listings: Listing[];
@@ -28,13 +29,23 @@ interface LiveFeedProps {
   userLon?: number;
 }
 
-const CATEGORIES = ['All', 'Pub Fare', 'Bistro', 'Pizza', 'Upscale Bar', 'Bakery'];
+const CATEGORIES = ['All', ...Array.from(new Set(ST_JOHNS_RESTAURANTS.map((r) => r.category)))];
+
+function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 export function LiveFeed({
   listings,
   onClaimListing,
-  userLat = 47.5615,
-  userLon = -52.7126,
+  userLat = ST_JOHNS_CENTER.lat,
+  userLon = ST_JOHNS_CENTER.lng,
 }: LiveFeedProps) {
   const [viewMode, setViewMode] = useState<'leaflet' | 'split' | 'cards' | 'radar'>('split');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -45,6 +56,16 @@ export function LiveFeed({
   // Compute live filtered and sorted listings
   const filteredListings = useMemo(() => {
     return listings
+      .map((item) =>
+        item.merchant
+          ? {
+              ...item,
+              distance_km: Number(
+                distanceKm(userLat, userLon, item.merchant.latitude, item.merchant.longitude).toFixed(2)
+              ),
+            }
+          : item
+      )
       .filter((item) => {
         if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
         if (searchQuery.trim()) {
@@ -67,7 +88,7 @@ export function LiveFeed({
         }
         return (a.distance_km ?? 0) - (b.distance_km ?? 0);
       });
-  }, [listings, selectedCategory, searchQuery, sortBy]);
+  }, [listings, selectedCategory, searchQuery, sortBy, userLat, userLon]);
 
   const activeCount = listings.filter((l) => l.status === 'active').length;
 
@@ -157,19 +178,19 @@ export function LiveFeed({
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Search */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 min-w-[220px] sm:max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search pizza, sushi, restaurant, or cuisine..."
+            placeholder="Search cod, pizza, oysters, or restaurant..."
             className="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
           />
         </div>
 
         {/* Sort and Category Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none min-w-0">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
@@ -243,7 +264,7 @@ export function LiveFeed({
           <div className="lg:col-span-6 space-y-3.5 max-h-[85vh] overflow-y-auto pr-1">
             <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
               <span>{filteredListings.length} Active Drops</span>
-              <span className="font-mono text-emerald-400">Mission District, SF</span>
+              <span className="font-mono text-emerald-400">Downtown St. John's, NL</span>
             </div>
 
             {filteredListings.map((item) => (

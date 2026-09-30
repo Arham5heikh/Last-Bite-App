@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { SurplusReason, DietaryTag, Listing, Merchant } from '@/src/lib/types/database';
 import { addSurplusListing } from '@/src/lib/store/realtimeStore';
+import { ST_JOHNS_RESTAURANTS, findRestaurant } from '@/src/lib/data/stJohns';
 import confetti from 'canvas-confetti';
 
 export interface CustomSurplusModalProps {
@@ -36,68 +37,16 @@ export interface KitchenProfile {
   photoUrl: string;
 }
 
-export const KITCHEN_PROFILES: KitchenProfile[] = [
-  {
-    id: 'merch_bella_napoli',
-    name: 'Bella Napoli Pizzeria',
-    address: '144 Water St, St. John\'s, NL',
-    phone: '(709) 555-0199',
-    category: 'Pizza',
-    latitude: 47.5618,
-    longitude: -52.7110,
-    photoUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'a1111111-1111-4111-a111-111111111111',
-    name: 'YellowBelly Brewery and Public House',
-    address: '288 Water St, St. John\'s, NL',
-    phone: '(709) 555-0101',
-    category: 'Pub Fare',
-    latitude: 47.5624,
-    longitude: -52.7096,
-    photoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'a2222222-2222-4222-a222-222222222222',
-    name: 'Oliver\'s Restaurant',
-    address: '160 Water St, St. John\'s, NL',
-    phone: '(709) 555-0102',
-    category: 'Bistro',
-    latitude: 47.5611,
-    longitude: -52.7118,
-    photoUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'a3333333-3333-4333-a333-333333333333',
-    name: 'Black Cat Pizzeria',
-    address: '13 LeMarchant Rd, St. John\'s, NL',
-    phone: '(709) 555-0103',
-    category: 'Pizza',
-    latitude: 47.5583,
-    longitude: -52.7169,
-    photoUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'a4444444-4444-4444-a444-444444444444',
-    name: 'Blue on Water',
-    address: '319 Water St, St. John\'s, NL',
-    phone: '(709) 555-0104',
-    category: 'Upscale Bar',
-    latitude: 47.5630,
-    longitude: -52.7088,
-    photoUrl: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'a5555555-5555-4555-a555-555555555555',
-    name: 'Rocket Bakery',
-    address: '272 Water St, St. John\'s, NL',
-    phone: '(709) 555-0105',
-    category: 'Bakery',
-    latitude: 47.5620,
-    longitude: -52.7100,
-    photoUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
-  },
-];
+export const KITCHEN_PROFILES: KitchenProfile[] = ST_JOHNS_RESTAURANTS.map((r) => ({
+  id: r.id,
+  name: r.name,
+  address: r.address,
+  phone: r.phone,
+  category: r.category,
+  latitude: r.latitude,
+  longitude: r.longitude,
+  photoUrl: r.photoUrl,
+}));
 
 const CUISINE_OPTIONS = [
   'Pizza',
@@ -283,7 +232,7 @@ export function CustomSurplusModal({
       phone: activeKitchen.phone,
       stripe_account_id: `acct_${activeKitchen.id.slice(0, 10)}`,
       verified: true,
-      terminal_pin: '1111',
+      terminal_pin: findRestaurant(activeKitchen.id)?.pin,
       avatar_url: activeKitchen.photoUrl,
       created_at: now.toISOString(),
     };
@@ -320,7 +269,7 @@ export function CustomSurplusModal({
           particleCount: 50,
           spread: 60,
           origin: { y: 0.6 },
-          colors: ['#ff6b00', '#00e599', '#f59e0b'],
+          colors: ['#ff6b00', '#00e599', '#ffb020'],
         });
       } catch {
         // ignore
@@ -333,7 +282,7 @@ export function CustomSurplusModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-[#121316] border border-[#26282d] rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col font-sans">
+      <div className="relative w-full max-w-lg md:landscape:max-w-2xl bg-[#121316] border border-[#26282d] rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col font-sans">
         {/* TOP HEADER (MATCHING EXACT IMAGE.PNG LAYOUT) */}
         <div className="bg-gradient-to-b from-[#2a1b14]/70 to-[#1c1e24]/90 border-b border-[#26282d] px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -358,7 +307,7 @@ export function CustomSurplusModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-[#26282d] transition-colors cursor-pointer"
+            className="w-12 h-12 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-[#26282d] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -499,11 +448,11 @@ export function CustomSurplusModal({
                 <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Available Quantity
                 </label>
-                <div className="flex items-center gap-2 bg-[#121316] border border-[#26282d] rounded-xl p-1 justify-between h-[38px]">
+                <div className="flex items-center gap-2 bg-[#121316] border border-[#26282d] rounded-xl p-1 justify-between h-14">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-7 h-7 rounded-lg bg-[#26282d] hover:bg-zinc-700 text-zinc-200 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-12 h-11 rounded-lg bg-[#26282d] hover:bg-zinc-700 active:scale-95 text-zinc-100 text-xl font-bold flex items-center justify-center transition-colors cursor-pointer"
                   >
                     -
                   </button>
@@ -513,7 +462,7 @@ export function CustomSurplusModal({
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.min(25, q + 1))}
-                    className="w-7 h-7 rounded-lg bg-[#26282d] hover:bg-zinc-700 text-zinc-200 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-12 h-11 rounded-lg bg-[#26282d] hover:bg-zinc-700 active:scale-95 text-zinc-100 text-xl font-bold flex items-center justify-center transition-colors cursor-pointer"
                   >
                     +
                   </button>
@@ -712,7 +661,7 @@ export function CustomSurplusModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 rounded-2xl bg-[#ff6b00] hover:bg-[#e56000] active:scale-[0.99] text-zinc-950 font-black text-sm sm:text-base transition-all shadow-xl shadow-orange-950/40 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full min-h-16 py-4 rounded-2xl bg-[#ff6b00] hover:bg-[#e56000] active:scale-[0.99] text-zinc-950 font-black text-sm sm:text-base transition-all shadow-xl shadow-orange-950/40 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Zap className="w-4 h-4 fill-zinc-950" />
               <span>

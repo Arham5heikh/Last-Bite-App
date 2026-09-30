@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import type { Listing, Order } from '@/src/lib/types/database';
 import { useRealtimeStore } from '@/src/lib/store/realtimeStore';
+import { useUserLocation } from '@/src/lib/hooks/useUserLocation';
 import { LiveFeed } from '@/src/components/consumer/LiveFeed';
 import { QuickPostModal } from '@/src/components/merchant/QuickPostModal';
 import { CheckoutModal } from '@/src/components/consumer/CheckoutModal';
@@ -57,9 +58,8 @@ export default function App() {
   const [terminalTargetOrderId, setTerminalTargetOrderId] = useState<string | undefined>();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // User simulated geolocation (Downtown St. John's, Newfoundland)
-  const userLat = 47.5615;
-  const userLon = -52.7126;
+  // Live device location when permitted, otherwise Downtown St. John's, NL
+  const { lat: userLat, lng: userLon, isLive: hasLiveLocation } = useUserLocation();
 
   // Initialize and handle URL routing
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function App() {
   const activeSurplusCount = listings.filter((l) => l.status === 'active').length;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-amber-500 selection:text-zinc-950">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-amber-500 selection:text-zinc-950">
       {/* Top Banner: Emergency Surplus Ticker & Portal Switcher Bar */}
       <div className="bg-zinc-900 border-b border-zinc-800 text-xs py-1.5 px-4 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-inner">
         <div className="flex items-center gap-2 text-zinc-400">
@@ -170,21 +170,21 @@ export default function App() {
               onClick={() => navigateTo('consumer')}
               className="flex items-center gap-2.5 cursor-pointer group"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25 group-hover:scale-105 transition-transform">
                 <Zap className="w-5 h-5 fill-zinc-950 text-zinc-950" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-lg sm:text-xl text-zinc-100 tracking-tight">
-                    Last<span className="text-amber-400">Bite</span>
+                    Last <span className="text-primary">Bite</span>
                   </span>
                   <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                     Consumer
                   </span>
                 </div>
                 <p className="text-[10px] text-zinc-400 -mt-0.5 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-amber-400" />
-                  Downtown St. John's, NL
+                  <MapPin className="w-3 h-3 text-primary" />
+                  {hasLiveLocation ? 'Using your live location' : "Downtown St. John's, NL"}
                 </p>
               </div>
             </div>

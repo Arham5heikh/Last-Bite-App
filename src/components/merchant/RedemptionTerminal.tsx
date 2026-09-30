@@ -84,7 +84,7 @@ export function RedemptionTerminal({ orders, targetOrderId, onSuccess }: Redempt
           particleCount: 70,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#10b981', '#f59e0b', '#3b82f6'],
+          colors: ['#00e599', '#ff6b00', '#ffb020'],
         });
       } catch {
         // ignore

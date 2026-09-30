@@ -24,165 +24,14 @@ import {
 } from 'lucide-react';
 import type { Listing, SurplusReason, DietaryTag, Merchant } from '@/src/lib/types/database';
 import { addSurplusListing, deleteListing } from '@/src/lib/store/realtimeStore';
-import { ST_JOHNS_RESTAURANTS, type StJohnsRestaurantInfo } from './TerminalLogin';
+import {
+  ST_JOHNS_RESTAURANTS,
+  ST_JOHNS_CATALOG_PRESETS,
+  toMerchant,
+  type PresetCatalogItem,
+} from '@/src/lib/data/stJohns';
 import { CustomSurplusModal } from './CustomSurplusModal';
 import confetti from 'canvas-confetti';
-
-export interface PresetCatalogItem {
-  id: string;
-  merchantId: string;
-  title: string;
-  description: string;
-  category: string;
-  originalPriceCents: number;
-  discountedPriceCents: number;
-  allergens: string[];
-  dietaryTags: DietaryTag[];
-  photoUrl: string;
-}
-
-// Pre-loaded 10 catalog dishes across the 5 St. John's establishments
-export const ST_JOHNS_CATALOG_PRESETS: Record<string, PresetCatalogItem[]> = {
-  // 1. YellowBelly Brewery (PIN 1111)
-  'a1111111-1111-4111-a111-111111111111': [
-    {
-      id: 'dish_yb_shortrib',
-      merchantId: 'a1111111-1111-4111-a111-111111111111',
-      title: "St. John's Stout Braised Short Rib",
-      description: "Slow-braised in house-brewed St. John's Stout with Yukon gold potato purée, glazed heritage carrots, and rich pan jus.",
-      category: 'Pub Fare',
-      originalPriceCents: 3600, // $36.00
-      discountedPriceCents: 1800, // $18.00
-      allergens: ['Dairy'],
-      dietaryTags: ['Vegetarian'],
-      photoUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 'dish_yb_fishchips',
-      merchantId: 'a1111111-1111-4111-a111-111111111111',
-      title: "YellowBelly Fish & Chips 1 pc",
-      description: "Crispy ale-battered Atlantic cod, hand-cut Kennebec fries, house tartar sauce, and lemon wedge.",
-      category: 'Pub Fare',
-      originalPriceCents: 1700, // $17.00
-      discountedPriceCents: 850, // $8.50
-      allergens: ['Gluten', 'Seafood'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1580217593608-61931cefc821?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-  ],
-
-  // 2. Oliver's Restaurant (PIN 2222)
-  'a2222222-2222-4222-a222-222222222222': [
-    {
-      id: 'dish_ol_chickenparm',
-      merchantId: 'a2222222-2222-4222-a222-222222222222',
-      title: "Chicken Parmesan Sandwich",
-      description: "Breaded chicken cutlet, San Marzano marinara, melted fior di latte, and basil pesto on toasted ciabatta.",
-      category: 'Bistro',
-      originalPriceCents: 2200, // $22.00
-      discountedPriceCents: 1100, // $11.00
-      allergens: ['Dairy', 'Gluten'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 'dish_ol_pate',
-      merchantId: 'a2222222-2222-4222-a222-222222222222',
-      title: "Chickpea & Walnut Pâté",
-      description: "Rich roasted walnut and herb chickpea spread with marinated olives, pickled shallots, and house crostini.",
-      category: 'Bistro',
-      originalPriceCents: 1800, // $18.00
-      discountedPriceCents: 900, // $9.00
-      allergens: ['Nuts', 'Gluten'],
-      dietaryTags: ['Vegetarian', 'Vegan'],
-      photoUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
-    },
-  ],
-
-  // 3. Black Cat Pizzeria (PIN 3333)
-  'a3333333-3333-4333-a333-333333333333': [
-    {
-      id: 'dish_bc_chickenbacon',
-      merchantId: 'a3333333-3333-4333-a333-333333333333',
-      title: "Chicken Bacon Ranch Pizza",
-      description: "Wood-fired sourdough crust, roasted garlic chicken breast, crispy pancetta bacon, house buttermilk ranch, and scallions.",
-      category: 'Pizza',
-      originalPriceCents: 2300, // $23.00
-      discountedPriceCents: 1150, // $11.50
-      allergens: ['Dairy', 'Gluten'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 'dish_bc_catfav',
-      merchantId: 'a3333333-3333-4333-a333-333333333333',
-      title: "Cat’s Favourite Pizza (Hot Honey)",
-      description: "Cup & char pepperoni, whipped ricotta, Calabrian chili oil, hot wildflower honey drizzle, and fresh oregano.",
-      category: 'Pizza',
-      originalPriceCents: 2200, // $22.00
-      discountedPriceCents: 1100, // $11.00
-      allergens: ['Dairy', 'Gluten'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=800&q=80',
-    },
-  ],
-
-  // 4. Blue on Water (PIN 4444)
-  'a4444444-4444-4444-a444-444444444444': [
-    {
-      id: 'dish_bw_trufflefries',
-      merchantId: 'a4444444-4444-4444-a444-444444444444',
-      title: "Truffle Fries",
-      description: "Crispy hand-cut fries tossed in white truffle oil, grated aged Parmigiano Reggiano, and rosemary aioli.",
-      category: 'Upscale Bar',
-      originalPriceCents: 1600, // $16.00
-      discountedPriceCents: 800, // $8.00
-      allergens: ['Dairy'],
-      dietaryTags: ['Vegetarian', 'Gluten-Free'],
-      photoUrl: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 'dish_bw_duckblt',
-      merchantId: 'a4444444-4444-4444-a444-444444444444',
-      title: "Duck BLT",
-      description: "Smoked duck breast, thick-cut double smoked bacon, heirloom tomato, baby greens, and roasted garlic aioli on brioche.",
-      category: 'Upscale Bar',
-      originalPriceCents: 2600, // $26.00
-      discountedPriceCents: 1300, // $13.00
-      allergens: ['Gluten', 'Eggs'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80',
-    },
-  ],
-
-  // 5. Rocket Bakery (PIN 5555)
-  'a5555555-5555-4555-a555-555555555555': [
-    {
-      id: 'dish_rb_breakfast',
-      merchantId: 'a5555555-5555-4555-a555-555555555555',
-      title: "Best Kind Breakfast Sandwich",
-      description: "Free-run egg, thick-cut country ham, aged cheddar, and house maple dijon butter on a freshly baked cheddar biscuit.",
-      category: 'Bakery',
-      originalPriceCents: 1800, // $18.00
-      discountedPriceCents: 900, // $9.00
-      allergens: ['Dairy', 'Gluten', 'Eggs'],
-      dietaryTags: ['Halal'],
-      photoUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 'dish_rb_appleflip',
-      merchantId: 'a5555555-5555-4555-a555-555555555555',
-      title: "Apple Flip",
-      description: "Flaky traditional Newfoundland puff pastry folded over cinnamon-spiced local Annapolis Valley apples with sugar crust.",
-      category: 'Bakery',
-      originalPriceCents: 700, // $7.00
-      discountedPriceCents: 350, // $3.50
-      allergens: ['Gluten'],
-      dietaryTags: ['Vegetarian'],
-      photoUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
-    },
-  ],
-};
 
 const SURPLUS_REASONS: { key: SurplusReason; label: string; desc: string; icon: string }[] = [
   { key: 'canceled_order', label: 'Canceled Pickup', desc: 'Driver never arrived / app cancel', icon: '🛵' },
@@ -216,7 +65,7 @@ interface PresetCatalogListingProps {
 
 export function PresetCatalogListing({
   activeListings,
-  merchantId = 'a1111111-1111-4111-a111-111111111111',
+  merchantId = ST_JOHNS_RESTAURANTS[0].id,
   onListingPublished,
 }: PresetCatalogListingProps) {
   // Find current merchant info from St. John's roster
@@ -226,7 +75,7 @@ export function PresetCatalogListing({
 
   // Load preset catalog dishes for THIS restaurant
   const catalogDishes = useMemo(() => {
-    return ST_JOHNS_CATALOG_PRESETS[currentRestaurant.id] || ST_JOHNS_CATALOG_PRESETS['a1111111-1111-4111-a111-111111111111'];
+    return ST_JOHNS_CATALOG_PRESETS[currentRestaurant.id] || ST_JOHNS_CATALOG_PRESETS[ST_JOHNS_RESTAURANTS[0].id];
   }, [currentRestaurant.id]);
 
   // Flow State
@@ -327,27 +176,7 @@ export function PresetCatalogListing({
     const newId = `lst_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
 
     // Prepare merchant object with St. John's coordinates
-    const merchantObj: Merchant = {
-      id: currentRestaurant.id,
-      business_name: currentRestaurant.name,
-      address: currentRestaurant.address,
-      latitude: currentRestaurant.id === 'a1111111-1111-4111-a111-111111111111' ? 47.5624
-              : currentRestaurant.id === 'a2222222-2222-4222-a222-222222222222' ? 47.5611
-              : currentRestaurant.id === 'a3333333-3333-4333-a333-333333333333' ? 47.5583
-              : currentRestaurant.id === 'a4444444-4444-4444-a444-444444444444' ? 47.5630
-              : 47.5620,
-      longitude: currentRestaurant.id === 'a1111111-1111-4111-a111-111111111111' ? -52.7096
-               : currentRestaurant.id === 'a2222222-2222-4222-a222-222222222222' ? -52.7118
-               : currentRestaurant.id === 'a3333333-3333-4333-a333-333333333333' ? -52.7169
-               : currentRestaurant.id === 'a4444444-4444-4444-a444-444444444444' ? -52.7088
-               : -52.7100,
-      phone: '(709) 555-0100',
-      stripe_account_id: `acct_${currentRestaurant.id.slice(0, 8)}`,
-      verified: true,
-      terminal_pin: currentRestaurant.pin,
-      avatar_url: currentRestaurant.photoUrl,
-      created_at: new Date().toISOString(),
-    };
+    const merchantObj: Merchant = toMerchant(currentRestaurant);
 
     const titleToUse = customItemData ? customItemData.title : selectedDish.title;
     const descToUse = customItemData 
@@ -390,7 +219,7 @@ export function PresetCatalogListing({
           particleCount: 45,
           spread: 55,
           origin: { y: 0.6 },
-          colors: ['#f59e0b', '#10b981', '#3b82f6'],
+          colors: ['#ff6b00', '#00e599', '#ffb020'],
         });
       } catch {
         // ignore
@@ -422,9 +251,9 @@ export function PresetCatalogListing({
       </div>
 
       {/* Main Grid: Rapid Post & Custom Dishes (Left) + Live Active Inventory (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 md:landscape:grid-cols-12 lg:grid-cols-12 gap-6 items-start">
         {/* POSTING PANEL (7 Columns) */}
-        <div className="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-6">
+        <div className="md:landscape:col-span-7 lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-6">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
             <div>
               <div className="flex items-center gap-2">
@@ -459,10 +288,10 @@ export function PresetCatalogListing({
               <button
                 type="button"
                 onClick={() => setIsCustomModalOpen(true)}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-black text-xs shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
+                className="min-h-12 px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black text-sm shadow-md shadow-amber-500/20 flex items-center gap-2 transition-transform active:scale-95 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>+ Custom Dish</span>
+                <span>Custom Dish</span>
               </button>
             </div>
 
@@ -478,7 +307,7 @@ export function PresetCatalogListing({
                     key={dish.id}
                     type="button"
                     onClick={() => handleSelectPreset(dish)}
-                    className={`relative text-left p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-44 overflow-hidden group ${
+                    className={`relative text-left p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-48 p-4 overflow-hidden group active:scale-[0.98] ${
                       isSelected
                         ? 'border-amber-500 bg-gradient-to-b from-amber-500/15 to-zinc-950 shadow-lg shadow-amber-950/40 ring-1 ring-amber-500'
                         : 'border-zinc-800 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-800/40'
@@ -540,7 +369,7 @@ export function PresetCatalogListing({
                     step="0.5"
                     value={originalPriceDollars}
                     onChange={(e) => handleOriginalPriceChange(parseFloat(e.target.value) || 0)}
-                    className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 font-mono font-bold text-sm focus:border-amber-500 focus:outline-none transition-colors"
+                    className="w-full h-14 pl-8 pr-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 font-mono font-bold text-lg focus:border-amber-500 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -549,21 +378,21 @@ export function PresetCatalogListing({
                 <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Available Quantity
                 </label>
-                <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl p-1 px-2 h-[42px] justify-between">
+                <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl p-1 px-1.5 h-14 justify-between">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-14 h-11 rounded-lg bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-zinc-100 text-2xl font-bold flex items-center justify-center transition-all cursor-pointer"
                   >
                     -
                   </button>
-                  <span className="font-mono font-black text-sm text-zinc-100">
+                  <span className="font-mono font-black text-xl text-zinc-100">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.min(25, q + 1))}
-                    className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-14 h-11 rounded-lg bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-zinc-100 text-2xl font-bold flex items-center justify-center transition-all cursor-pointer"
                   >
                     +
                   </button>
@@ -591,7 +420,7 @@ export function PresetCatalogListing({
                       key={pct}
                       type="button"
                       onClick={() => handleSelectDiscountPreset(pct)}
-                      className={`py-2 px-1 rounded-xl text-xs font-bold font-mono transition-all cursor-pointer ${
+                      className={`min-h-14 py-3 px-1 rounded-xl text-sm sm:text-base font-bold font-mono transition-all active:scale-95 cursor-pointer ${
                         isChipSelected
                           ? 'bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/30'
                           : 'bg-zinc-900 border border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-zinc-100'
@@ -606,15 +435,15 @@ export function PresetCatalogListing({
               {/* Custom typed Bite Price input */}
               <div className="pt-2 flex items-center justify-between gap-3 text-xs">
                 <span className="text-zinc-400">Or custom Bite Price ($):</span>
-                <div className="relative w-28">
-                  <span className="absolute left-2.5 top-2 text-zinc-400 font-mono text-xs">$</span>
+                <div className="relative w-36">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-mono text-sm">$</span>
                   <input
                     type="number"
                     step="0.25"
                     min="0.5"
                     value={customBitePrice}
                     onChange={(e) => handleBitePriceChange(e.target.value)}
-                    className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-right font-mono font-bold text-xs text-emerald-400 focus:border-amber-500 focus:outline-none"
+                    className="w-full h-12 pl-7 pr-3 rounded-lg bg-zinc-900 border border-zinc-700 text-right font-mono font-bold text-base text-emerald-400 focus:border-amber-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -627,7 +456,7 @@ export function PresetCatalogListing({
                 <span className="text-xs text-zinc-500 line-through font-mono">
                   ${currentOriginalFormatted}
                 </span>
-                <span className="text-lg font-black text-emerald-400 font-mono">
+                <span className="text-2xl font-black text-emerald-400 font-mono">
                   ${currentBitePriceFormatted}
                 </span>
                 <span className="text-xs font-mono font-semibold text-amber-400">
@@ -654,14 +483,14 @@ export function PresetCatalogListing({
                     key={reason.key}
                     type="button"
                     onClick={() => setSelectedReason(reason.key)}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    className={`min-h-24 p-4 rounded-2xl border text-left transition-all active:scale-[0.98] cursor-pointer ${
                       isSelected
                         ? 'border-amber-500 bg-amber-500/10 shadow-md text-zinc-100'
                         : 'border-zinc-800 bg-zinc-950/60 hover:bg-zinc-800/50 text-zinc-400'
                     }`}
                   >
-                    <div className="text-lg mb-1">{reason.icon}</div>
-                    <div className="text-xs font-bold text-zinc-200 leading-tight">
+                    <div className="text-2xl mb-1">{reason.icon}</div>
+                    <div className="text-sm font-bold text-zinc-200 leading-tight">
                       {reason.label}
                     </div>
                     <div className="text-[10px] text-zinc-400 mt-0.5 line-clamp-1">
@@ -690,7 +519,7 @@ export function PresetCatalogListing({
                     key={opt.minutes}
                     type="button"
                     onClick={() => setPickupMinutes(opt.minutes)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-colors cursor-pointer ${
+                    className={`min-h-12 px-4 py-2.5 rounded-lg text-sm font-mono font-bold transition-all active:scale-95 cursor-pointer ${
                       pickupMinutes === opt.minutes
                         ? 'bg-amber-500 text-zinc-950 shadow-sm'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -707,7 +536,7 @@ export function PresetCatalogListing({
               type="button"
               onClick={() => handlePublish()}
               disabled={isPublishing}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 active:scale-[0.99] text-zinc-950 font-black text-sm sm:text-base transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full min-h-20 py-5 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-zinc-950 font-black text-base sm:text-lg transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isPublishing ? (
                 <>
@@ -738,7 +567,7 @@ export function PresetCatalogListing({
         </div>
 
         {/* RIGHT COLUMN: Active Live Surplus for This Restaurant (5 Columns) */}
-        <div className="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+        <div className="md:landscape:col-span-5 lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
@@ -801,10 +630,10 @@ export function PresetCatalogListing({
                     <button
                       type="button"
                       onClick={() => handleCancelItem(listing.id)}
-                      className="p-2 rounded-xl bg-zinc-900 hover:bg-rose-500/20 text-zinc-500 hover:text-rose-400 border border-zinc-800 transition-colors cursor-pointer shrink-0"
+                      className="w-14 h-14 flex items-center justify-center rounded-xl bg-zinc-900 hover:bg-rose-500/20 active:scale-95 text-zinc-400 hover:text-rose-400 border border-zinc-800 transition-all cursor-pointer shrink-0"
                       title="Pull item from marketplace"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-6 h-6" />
                     </button>
                   </div>
                 );

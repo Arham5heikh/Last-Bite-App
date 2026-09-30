@@ -6,6 +6,7 @@
 'use server';
 
 import type { Listing, SurplusReason, DietaryTag } from '@/src/lib/types/database';
+import { ST_JOHNS_CENTER } from '@/src/lib/data/stJohns';
 
 export interface CreateListingFormState {
   success: boolean;
@@ -179,8 +180,8 @@ export async function getNearbyListings(
       return true;
     })
     .map((listing) => {
-      const merchantLat = listing.merchant?.latitude ?? 37.7749;
-      const merchantLon = listing.merchant?.longitude ?? -122.4194;
+      const merchantLat = listing.merchant?.latitude ?? ST_JOHNS_CENTER.lat;
+      const merchantLon = listing.merchant?.longitude ?? ST_JOHNS_CENTER.lng;
       const distKm = calculateHaversineDistance(userLat, userLon, merchantLat, merchantLon);
       const remainingSeconds = Math.max(0, Math.floor((new Date(listing.pickup_cutoff).getTime() - now.getTime()) / 1000));
       return {
