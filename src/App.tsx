@@ -7,7 +7,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Zap, 
   MapPin, 
   Store, 
   Clock, 
@@ -39,6 +38,8 @@ import { PresetCatalogListing } from '@/src/components/kitchen/PresetCatalogList
 import { TerminalRedemption } from '@/src/components/kitchen/TerminalRedemption';
 import { TerminalAuthWrapper } from '@/src/components/kitchen/TerminalAuthWrapper';
 import { ArchitectureInspectorModal } from '@/src/components/common/ArchitectureInspectorModal';
+import { LastBiteLogo } from '@/src/components/common/LastBiteLogo';
+import { HowItWorksButton } from '@/src/components/common/HowItWorksVideo';
 
 type AppPortal = 'consumer' | 'kitchen';
 type KitchenSubView = 'catalog' | 'verify';
@@ -170,9 +171,7 @@ export default function App() {
               onClick={() => navigateTo('consumer')}
               className="flex items-center gap-2.5 cursor-pointer group"
             >
-              <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25 group-hover:scale-105 transition-transform">
-                <Zap className="w-5 h-5 fill-zinc-950 text-zinc-950" />
-              </div>
+              <LastBiteLogo className="w-10 h-10 shrink-0 drop-shadow-lg group-hover:scale-105 transition-transform" />
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-lg sm:text-xl text-zinc-100 tracking-tight">
@@ -207,6 +206,8 @@ export default function App() {
                 <span>My Active Pass (#{orders[0].pickup_pin})</span>
               </button>
             )}
+
+            <HowItWorksButton audience="customers" />
 
             {/* Architecture Inspector */}
             <button

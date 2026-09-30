@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 
 import { ST_JOHNS_RESTAURANTS, type StJohnsRestaurantInfo } from '@/src/lib/data/stJohns';
+import { LastBiteLogo } from '@/src/components/common/LastBiteLogo';
+import { HowItWorksButton } from '@/src/components/common/HowItWorksVideo';
 
 export { ST_JOHNS_RESTAURANTS, type StJohnsRestaurantInfo };
 
@@ -107,6 +109,7 @@ export function TerminalLogin({ onLoginSuccess }: TerminalLoginProps) {
     <div className="w-full max-w-6xl mx-auto py-6 px-4">
       {/* Header Banner */}
       <div className="text-center mb-8 space-y-2">
+        <LastBiteLogo className="w-14 h-14 mx-auto mb-3" />
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold">
           <Lock className="w-3.5 h-3.5" />
           <span>St. John's KDS Security Gateway</span>
@@ -117,6 +120,9 @@ export function TerminalLogin({ onLoginSuccess }: TerminalLoginProps) {
         <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
           Authenticate with your location's 4-digit terminal PIN to access preset dish catalogs, broadcast surplus drops, and scan pickup passes.
         </p>
+        <div className="flex justify-center pt-2">
+          <HowItWorksButton audience="restaurants" label="Watch: how Last Bite works for restaurants" className="min-h-12 px-4 text-sm" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:landscape:grid-cols-12 lg:grid-cols-12 gap-6 items-stretch">

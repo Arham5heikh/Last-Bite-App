@@ -71,7 +71,8 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       if (event.data?.type === 'SYNC_STATE') {
         if (event.data.listings) storeListings = event.data.listings;
         if (event.data.orders) storeOrders = event.data.orders;
-        notifyListeners();
+        // Local only: re-broadcasting would echo state between tabs forever
+        notifyLocalListeners();
       }
     };
   } catch (e) {
@@ -79,8 +80,12 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   }
 }
 
-function notifyListeners() {
+function notifyLocalListeners() {
   listeners.forEach((l) => l());
+}
+
+function notifyListeners() {
+  notifyLocalListeners();
   if (broadcastChannel) {
     try {
       broadcastChannel.postMessage({
