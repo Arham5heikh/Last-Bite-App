@@ -102,7 +102,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
           particleCount: 80,
           spread: 80,
           origin: { y: 0.6 },
-          colors: ['#10b981', '#f59e0b', '#3b82f6'],
+          colors: ['#00e599', '#ff6b00', '#ffb020'],
         });
       } catch {
         // ignore
@@ -164,7 +164,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
           <button
             type="button"
             onClick={() => setPayoutNotification(null)}
-            className="text-zinc-400 hover:text-zinc-200 text-xs px-2 py-1 rounded-lg bg-zinc-900/60 border border-zinc-700"
+            className="min-h-12 text-zinc-300 hover:text-zinc-100 text-sm font-bold px-4 py-2 rounded-xl bg-zinc-900/60 border border-zinc-700 active:scale-95 cursor-pointer"
           >
             Dismiss
           </button>
@@ -200,13 +200,13 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
               setVerificationMode('pin');
               setErrorMessage(null);
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`min-h-14 flex items-center gap-2 px-5 py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-95 cursor-pointer ${
               verificationMode === 'pin'
                 ? 'bg-amber-500 text-zinc-950 shadow'
                 : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
-            <Hash className="w-3.5 h-3.5" />
+            <Hash className="w-5 h-5" />
             <span>4-Digit PIN</span>
           </button>
           <button
@@ -215,21 +215,21 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
               setVerificationMode('qr');
               setErrorMessage(null);
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`min-h-14 flex items-center gap-2 px-5 py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-95 cursor-pointer ${
               verificationMode === 'qr'
                 ? 'bg-amber-500 text-zinc-950 shadow'
                 : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
-            <Scan className="w-3.5 h-3.5" />
+            <Scan className="w-5 h-5" />
             <span>QR Pass Scanner</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 md:landscape:grid-cols-12 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Orders in Queue (5 cols) */}
-        <div className="lg:col-span-5 space-y-3">
+        <div className="md:landscape:col-span-5 lg:col-span-5 space-y-3">
           <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
             <span className="font-semibold uppercase tracking-wider">Awaiting Customer Arrival</span>
             <span className="font-mono text-amber-400 font-bold">{activeReservedOrders.length} In-Queue</span>
@@ -246,7 +246,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
                     setErrorMessage(null);
                     setLastRedeemedOrder(null);
                   }}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                  className={`min-h-24 p-4 rounded-2xl border transition-all active:scale-[0.99] cursor-pointer ${
                     isSelected
                       ? 'bg-amber-500/15 border-amber-500 text-zinc-100 shadow-md ring-1 ring-amber-500/50'
                       : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
@@ -258,15 +258,15 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
                         <span className="text-[11px] font-mono font-semibold text-amber-400">
                           {ord.id.toUpperCase()}
                         </span>
-                        <span className="text-[10px] font-mono bg-zinc-800 text-zinc-300 px-1.5 py-0.2 rounded border border-zinc-700">
+                        <span className="text-xs font-mono font-bold bg-zinc-800 text-zinc-200 px-2 py-0.5 rounded border border-zinc-700">
                           PIN: {ord.pickup_pin}
                         </span>
                       </div>
-                      <h4 className="text-xs font-bold text-zinc-100 mt-1 line-clamp-1">
+                      <h4 className="text-sm font-bold text-zinc-100 mt-1 line-clamp-1">
                         {ord.listing?.title}
                       </h4>
                     </div>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-base font-mono font-bold text-emerald-400">
                       ${(ord.total_amount_cents / 100).toFixed(2)}
                     </span>
                   </div>
@@ -297,7 +297,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
         </div>
 
         {/* Right Column: Tactical POS Keypad / QR Scanner (7 cols) */}
-        <div className="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+        <div className="md:landscape:col-span-7 lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
           {/* Target Order Info */}
           {selectedOrder ? (
             <div className="p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-between">
@@ -355,13 +355,13 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
               </div>
 
               {/* Tactile Keypad */}
-              <div className="grid grid-cols-3 gap-2.5 max-w-xs mx-auto">
+              <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
                 {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
                   <button
                     type="button"
                     key={digit}
                     onClick={() => handleKeyPress(digit)}
-                    className="h-14 rounded-2xl bg-zinc-800/80 hover:bg-zinc-700 active:scale-95 text-zinc-100 font-mono text-xl font-bold border border-zinc-700/60 shadow transition-all cursor-pointer"
+                    className="h-20 rounded-2xl bg-zinc-800/80 hover:bg-zinc-700 active:scale-95 text-zinc-100 font-mono text-3xl font-bold border border-zinc-700/60 shadow transition-all cursor-pointer"
                   >
                     {digit}
                   </button>
@@ -369,23 +369,23 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="h-14 rounded-2xl bg-zinc-800/40 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-xs uppercase tracking-wider border border-zinc-800 transition-all cursor-pointer"
+                  className="h-20 rounded-2xl bg-zinc-800/40 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-sm uppercase tracking-wider border border-zinc-800 transition-all cursor-pointer"
                 >
                   Clear
                 </button>
                 <button
                   type="button"
                   onClick={() => handleKeyPress('0')}
-                  className="h-14 rounded-2xl bg-zinc-800/80 hover:bg-zinc-700 active:scale-95 text-zinc-100 font-mono text-xl font-bold border border-zinc-700/60 shadow transition-all cursor-pointer"
+                  className="h-20 rounded-2xl bg-zinc-800/80 hover:bg-zinc-700 active:scale-95 text-zinc-100 font-mono text-3xl font-bold border border-zinc-700/60 shadow transition-all cursor-pointer"
                 >
                   0
                 </button>
                 <button
                   type="button"
                   onClick={handleBackspace}
-                  className="h-14 rounded-2xl bg-zinc-800/40 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-xs uppercase tracking-wider border border-zinc-800 transition-all cursor-pointer flex items-center justify-center"
+                  className="h-20 rounded-2xl bg-zinc-800/40 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-sm uppercase tracking-wider border border-zinc-800 transition-all cursor-pointer flex items-center justify-center"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-6 h-6" />
                 </button>
               </div>
 
@@ -394,7 +394,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
                 type="button"
                 disabled={isVerifying || pinDigits.length !== 4 || !selectedOrder}
                 onClick={handleVerifyPin}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.99] text-zinc-950 font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full min-h-20 py-5 px-4 rounded-2xl bg-emerald-400 hover:bg-emerald-300 active:scale-[0.99] text-zinc-950 font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 <CheckCircle2 className="w-5 h-5 fill-zinc-950" />
                 <span>
@@ -438,7 +438,7 @@ export function TerminalRedemption({ orders, merchantId, targetOrderId, onSucces
                 type="button"
                 disabled={!selectedOrder || isScanningSim || isVerifying}
                 onClick={handleSimulateQrScan}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.99] text-zinc-950 font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 cursor-pointer"
+                className="w-full min-h-20 py-5 px-4 rounded-2xl bg-emerald-400 hover:bg-emerald-300 active:scale-[0.99] text-zinc-950 font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 cursor-pointer"
               >
                 <Scan className="w-5 h-5" />
                 <span>

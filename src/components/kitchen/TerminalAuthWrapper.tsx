@@ -13,7 +13,7 @@ import {
   Layers,
   ArrowRight
 } from 'lucide-react';
-import { TerminalLogin, ST_JOHNS_RESTAURANTS, type StJohnsRestaurantInfo } from './TerminalLogin';
+import { TerminalLogin, ST_JOHNS_RESTAURANTS, shortName, type StJohnsRestaurantInfo } from './TerminalLogin';
 import type { Merchant, Order, Listing } from '@/src/lib/types/database';
 
 interface KitchenAuthContextType {
@@ -40,7 +40,7 @@ interface TerminalAuthWrapperProps {
   renderContent?: (restaurant: StJohnsRestaurantInfo) => React.ReactNode;
 }
 
-const STORAGE_KEY = 'lastbite_kitchen_active_session_id';
+const STORAGE_KEY = 'lastbite_kitchen_active_session_id_v2';
 
 export function TerminalAuthWrapper({
   children,
@@ -115,7 +115,7 @@ export function TerminalAuthWrapper({
     >
       <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-6 space-y-6">
         {/* Authenticated KDS Station Header */}
-        <div className="w-full max-w-6xl mx-auto bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 border border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="w-full max-w-6xl mx-auto bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 border border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col md:landscape:flex-row lg:flex-row md:landscape:items-center lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 text-xl">
               {authenticatedRestaurant.emoji}
@@ -146,7 +146,7 @@ export function TerminalAuthWrapper({
                 <button
                   type="button"
                   onClick={() => onSubTabChange('catalog')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  className={`min-h-14 px-5 py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-95 cursor-pointer ${
                     activeSubTab === 'catalog'
                       ? 'bg-amber-500 text-zinc-950 shadow-md'
                       : 'text-zinc-400 hover:text-zinc-200'
@@ -157,7 +157,7 @@ export function TerminalAuthWrapper({
                 <button
                   type="button"
                   onClick={() => onSubTabChange('verify')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  className={`min-h-14 px-5 py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-95 cursor-pointer ${
                     activeSubTab === 'verify'
                       ? 'bg-amber-500 text-zinc-950 shadow-md'
                       : 'text-zinc-400 hover:text-zinc-200'
@@ -172,12 +172,12 @@ export function TerminalAuthWrapper({
             <select
               value={authenticatedRestaurant.id}
               onChange={(e) => handleSwitchRestaurant(e.target.value)}
-              className="bg-zinc-900 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-2.5 py-1.5 font-mono cursor-pointer focus:outline-none focus:border-amber-500"
+              className="min-h-14 bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm rounded-xl px-3 py-2 font-mono cursor-pointer focus:outline-none focus:border-amber-500"
               title="Switch St. John's Restaurant"
             >
               {ST_JOHNS_RESTAURANTS.map((r) => (
                 <option key={r.id} value={r.id}>
-                  {r.emoji} {r.name.split(' ')[0]} ({r.pin})
+                  {r.emoji} {shortName(r.name)} ({r.pin})
                 </option>
               ))}
             </select>
@@ -186,10 +186,10 @@ export function TerminalAuthWrapper({
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-rose-950/60 border border-zinc-800 hover:border-rose-700/60 text-zinc-400 hover:text-rose-300 text-xs font-mono font-bold transition-all cursor-pointer"
+              className="min-h-14 flex items-center gap-2 px-4 py-3 rounded-xl bg-zinc-900 hover:bg-rose-950/60 active:scale-95 border border-zinc-800 hover:border-rose-700/60 text-zinc-400 hover:text-rose-300 text-sm font-mono font-bold transition-all cursor-pointer"
               title="Lock terminal and end shift"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-5 h-5" />
               <span className="hidden sm:inline">Lock Station</span>
             </button>
           </div>
