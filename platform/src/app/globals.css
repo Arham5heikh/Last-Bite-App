@@ -1,22 +1,26 @@
 @import 'tailwindcss';
 
-/* Rescue Bites design tokens: dark emerald surfaces with amber accents. */
+/* Last Bite design tokens: Deep Obsidian / Charcoal surfaces, Vivid Orange actions,
+   Electric Emerald prices & success, Warm Gold timers & warnings. */
 @theme {
-  --color-bg: #07110d;
-  --color-bg-2: #0b1813;
-  --color-surface: #0f1c16;
-  --color-surface-2: #16271f;
-  --color-ink: #ecfdf5;
-  --color-ink-2: #b4c6bd;
-  --color-muted: #86998f;
-  --color-line: #213629;
-  --color-primary: #10b981;
-  --color-primary-600: #059669;
-  --color-primary-soft: #0b3a2a;
-  --color-primary-ink: #6ee7b7;
-  --color-accent: #f59e0b;
-  --color-accent-soft: #3b2a0a;
-  --color-accent-ink: #fcd34d;
+  --color-bg: #121316;
+  --color-bg-2: #16171b;
+  --color-surface: #1c1e24;
+  --color-surface-2: #24262d;
+  --color-ink: #f4f4f5;
+  --color-ink-2: #c4c5cc;
+  --color-muted: #8b8d98;
+  --color-line: #2c2f37;
+  --color-primary: #ff6b00;
+  --color-primary-600: #e65f00;
+  --color-primary-soft: #3a1d08;
+  --color-primary-ink: #ff9a4d;
+  --color-success: #00e599;
+  --color-success-soft: #073d2c;
+  --color-success-ink: #5cf0bf;
+  --color-accent: #ffb020;
+  --color-accent-soft: #3a2a0a;
+  --color-accent-ink: #ffc85c;
   --color-danger: #f87171;
   --color-danger-soft: #3a1414;
 
@@ -37,8 +41,8 @@
   body {
     @apply bg-bg text-ink antialiased;
     background-image:
-      radial-gradient(900px 500px at 85% -10%, rgba(16, 185, 129, 0.1), transparent 60%),
-      radial-gradient(700px 400px at -10% 30%, rgba(245, 158, 11, 0.06), transparent 60%);
+      radial-gradient(900px 500px at 85% -10%, rgba(255, 107, 0, 0.09), transparent 60%),
+      radial-gradient(700px 400px at -10% 30%, rgba(255, 176, 32, 0.05), transparent 60%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4 {
@@ -48,7 +52,7 @@
     @apply text-primary;
   }
   ::selection {
-    background: rgba(16, 185, 129, 0.35);
+    background: rgba(255, 107, 0, 0.35);
   }
 }
 
@@ -58,18 +62,18 @@
 }
 
 @utility grad-text {
-  background: linear-gradient(135deg, #34d399 0%, #059669 55%, #047857 100%);
+  background: linear-gradient(135deg, #ffb020 0%, #ff6b00 55%, #e65f00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 @utility bg-grad {
-  background: linear-gradient(135deg, #34d399 0%, #059669 55%, #047857 100%);
+  background: linear-gradient(135deg, #ff8a33 0%, #ff6b00 55%, #e65f00 100%);
 }
 
 @utility bg-grad-warm {
-  background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
+  background: linear-gradient(135deg, #ffd166 0%, #ffb020 100%);
 }
 
 /* Leaflet: darken light map tiles to match the UI, and style pins/popups. */
@@ -77,7 +81,7 @@
   filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.6);
 }
 .leaflet-container {
-  background: #0b1813;
+  background: #16171b;
   font-family: var(--font-sans);
 }
 .leaflet-popup-content-wrapper,
@@ -90,7 +94,7 @@
   margin: 12px 14px !important;
 }
 .leaflet-control-attribution {
-  background: rgba(7, 17, 13, 0.75) !important;
+  background: rgba(18, 19, 22, 0.75) !important;
   color: var(--color-muted) !important;
 }
 .leaflet-control-attribution a {
@@ -111,7 +115,7 @@
   width: max-content;
 }
 .map-pin b {
-  color: var(--color-primary-ink);
+  color: var(--color-success);
 }
 .map-pin i {
   font-style: normal;

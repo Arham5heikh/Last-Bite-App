@@ -37,11 +37,11 @@ const plexMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: 'Rescue Bites: Rescue good food, save money', template: '%s · Rescue Bites' },
-  description: 'Rescue Bites: rescue good restaurant food at a discount around greater Seattle.',
+  title: { default: 'Last Bite: Rescue good food, save money', template: '%s · Last Bite' },
+  description: 'Last Bite: rescue good restaurant food at a discount around greater Seattle.',
 };
 
-export const viewport: Viewport = { themeColor: '#07110d' };
+export const viewport: Viewport = { themeColor: '#121316' };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const viewer = await getViewer();

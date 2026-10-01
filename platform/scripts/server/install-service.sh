@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Installs Rescue Bites as a systemd service, so it keeps running after you close your editor or log out,
+# Installs Last Bite as a systemd service, so it keeps running after you close your editor or log out,
 # restarts if it crashes, and starts when the server boots.
 #
 #   sudo bash scripts/server/install-service.sh [--port 3000] [--host 0.0.0.0] [--user NAME] [--node /path/to/node]
 #
-# Then: sudo systemctl start rescuebites   (status: systemctl status rescuebites, logs: sudo journalctl -u rescuebites -f)
+# Then: sudo systemctl start lastbite   (status: systemctl status lastbite, logs: sudo journalctl -u lastbite -f)
 #
-# On a server still running the old "biteback" service (from before the rename to Rescue Bites), it takes over that
-# service's port, address, user and Node.js, removes it, and starts rescuebites in its place.
+# On a server still running the old "biteback" service (from before the rename to Last Bite), it takes over that
+# service's port, address, user and Node.js, removes it, and starts lastbite in its place.
 set -euo pipefail
 
-SERVICE=rescuebites
+SERVICE=lastbite
 UNIT=/etc/systemd/system/$SERVICE.service
 APP_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 PORT=3000
@@ -71,7 +71,7 @@ fi
 
 sed -e "s|@APP_DIR@|$APP_DIR|g" -e "s|@APP_USER@|$APP_USER|g" -e "s|@APP_GROUP@|$APP_GROUP|g" \
     -e "s|@NODE_BIN@|$NODE_BIN|g" -e "s|@NODE_DIR@|$NODE_DIR|g" -e "s|@PORT@|$PORT|g" -e "s|@HOST@|$HOST|g" \
-    deploy/rescuebites.service > "$UNIT"
+    deploy/lastbite.service > "$UNIT"
 chmod 644 "$UNIT"
 systemctl daemon-reload
 systemctl enable "$SERVICE" >/dev/null 2>&1

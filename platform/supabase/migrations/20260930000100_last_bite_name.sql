@@ -1,4 +1,4 @@
--- The business is now called Rescue Bites: the suspended-restaurant message names it, and the
+-- The business is now called Last Bite: the suspended-restaurant message names it, and the
 -- every-minute cleanup job is renamed. The functions are as in 20260929000300_functions.sql; only that message changed.
 
 -- Creates (p_offer_id null) or edits an offer from one of the restaurant's menu items.
@@ -33,7 +33,7 @@ begin
     end if;
     committed := existing.quantity_total - existing.quantity_available;
   elsif r_status = 'suspended' then
-    raise exception 'Your restaurant is suspended, so you cannot post offers. Please contact Rescue Bites support.' using errcode = 'BB403';
+    raise exception 'Your restaurant is suspended, so you cannot post offers. Please contact Last Bite support.' using errcode = 'BB403';
   end if;
 
   select * into item from public.menu_items where id = p_menu_item_id and restaurant_id = rid and active;
@@ -111,7 +111,7 @@ begin
     end if;
     select status into r_status from public.restaurants where id = v.restaurant_id;
     if r_status = 'suspended' then
-      raise exception 'Your restaurant is suspended, so you cannot post offers. Please contact Rescue Bites support.' using errcode = 'BB403';
+      raise exception 'Your restaurant is suspended, so you cannot post offers. Please contact Last Bite support.' using errcode = 'BB403';
     end if;
   end if;
   update public.offers set status = p_status where id = v.id returning * into v;
@@ -124,7 +124,7 @@ do $$
 begin
   if exists (select 1 from pg_extension where extname = 'pg_cron') then
     perform cron.unschedule(jobid) from cron.job where jobname = 'biteback-sweep';
-    perform cron.schedule('rescuebites-sweep', '* * * * *', 'select public.sweep()');
+    perform cron.schedule('lastbite-sweep', '* * * * *', 'select public.sweep()');
   end if;
 exception when others then
   raise notice 'Could not rename the cleanup job (%); schedule /api/cron/sweep instead.', sqlerrm;

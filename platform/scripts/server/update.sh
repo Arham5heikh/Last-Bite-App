@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploys the latest code to a server running the rescuebites systemd service:
+# Deploys the latest code to a server running the lastbite systemd service:
 # pulls, installs packages if they changed, builds into .next-build while the live site keeps running,
 # then swaps the new build in and restarts (about a second of downtime). If the new version doesn't
 # answer, the previous build is put back.
@@ -9,7 +9,7 @@
 #     --force     rebuild and restart even if that commit is already live
 set -euo pipefail
 
-SERVICE=rescuebites
+SERVICE=lastbite
 STAMP=.next/DEPLOYED_COMMIT # the commit the live build was made from
 
 fail() { echo "Error: $*" >&2; exit 1; }

@@ -1,7 +1,7 @@
 'use client';
 
 // Lightweight confetti burst (no dependencies). Skipped for users who prefer reduced motion.
-const COLORS = ['#10b981', '#34d399', '#059669', '#fde047', '#f59e0b', '#fb7185', '#60a5fa', '#a78bfa'];
+const COLORS = ['#ff6b00', '#ff8a33', '#ffb020', '#ffd166', '#00e599', '#5cf0bf', '#60a5fa', '#f4f4f5'];
 
 export function confetti({ particles = 220, duration = 3800 }: { particles?: number; duration?: number } = {}) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;

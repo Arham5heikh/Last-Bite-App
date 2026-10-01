@@ -33,7 +33,7 @@ export function OfferCard({ offer, onOrder }: { offer: OfferRow; onOrder: () => 
   return (
     <article className={cn('flex flex-col overflow-hidden rounded-card border border-line bg-surface shadow-card transition hover:-translate-y-0.5', expired && 'opacity-50 grayscale')}>
       <OfferImage offer={offer} className={offer.image_url ? 'h-[180px]' : 'h-32'}>
-        <span className="absolute top-3 left-3 rounded-full bg-accent px-3 py-1 font-heading text-sm font-extrabold text-[#111]">-{offer.discount_pct}%</span>
+        <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 font-heading text-sm font-extrabold text-[#121316]">-{offer.discount_pct}%</span>
         <span className={cn('absolute top-3 right-3 rounded-full px-2.5 py-1 text-xs font-bold backdrop-blur', offer.quantity_available <= 2 ? 'bg-accent text-[#1c1203]' : 'bg-bg/70 text-ink')}>
           {offer.quantity_available} left
         </span>
@@ -45,7 +45,7 @@ export function OfferCard({ offer, onOrder }: { offer: OfferRow; onOrder: () => 
         <h3 className="m-0 text-lg font-bold">{offer.title}</h3>
         <div className="text-sm text-muted">{offer.restaurant_name} · {offer.city}</div>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-2">
-          <span className="inline-flex items-center gap-1"><Clock className="size-3.5" /> Pick up by {fmtTime(offer.pickup_end)}</span>
+          <span className="inline-flex items-center gap-1 text-accent-ink"><Clock className="size-3.5" /> Pick up by {fmtTime(offer.pickup_end)}</span>
           {offer.distance_miles != null && <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" /> {offer.distance_miles} mi</span>}
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
@@ -53,7 +53,7 @@ export function OfferCard({ offer, onOrder }: { offer: OfferRow; onOrder: () => 
           {offer.dietary.map((d) => <Badge key={d} tone="diet">{d}</Badge>)}
         </div>
         <div className="mt-auto flex items-center gap-2 border-t border-dashed border-line pt-3">
-          <span className="font-heading text-2xl font-extrabold tracking-tight">{money(offer.price_cents)}</span>
+          <span className="font-heading text-2xl font-extrabold tracking-tight text-success">{money(offer.price_cents)}</span>
           <span className="text-muted line-through">{money(offer.original_price_cents)}</span>
           <span className="flex-1" />
           <Button size="sm" disabled={expired} onClick={onOrder}>{expired ? 'Expired' : 'Order'}</Button>

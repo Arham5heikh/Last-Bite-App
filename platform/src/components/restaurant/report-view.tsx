@@ -39,7 +39,7 @@ export function ReportView({ report: rep, today }: { report: Report; today: stri
       <Paper className="p-8">
         <div className="mb-5 flex items-start justify-between gap-4 border-b border-[#e3eae6] pb-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/logo.svg" alt="Rescue Bites" className="h-14" />
+          <img src="/assets/logo.svg" alt="Last Bite" className="h-14" />
           <div className="text-right">
             <h1 className="m-0 text-2xl font-extrabold">Daily sales report</h1>
             <div className="text-sm text-[#6b7b73]">{rep.restaurant.name} · {rep.dateText}</div>
@@ -50,12 +50,12 @@ export function ReportView({ report: rep, today }: { report: Report; today: stri
           {kpis.map(([k, v], i) => (
             <div key={k} className="rounded-xl bg-[#f2f7f4] px-3 py-2.5 print:[print-color-adjust:exact]">
               <div className="text-[0.68rem] font-bold tracking-wider text-[#6b7b73] uppercase">{k}</div>
-              <b className={cn('block font-heading text-lg font-extrabold', i === 0 && 'text-[#047857]')}>{v}</b>
+              <b className={cn('block font-heading text-lg font-extrabold', i === 0 && 'text-[#c2410c]')}>{v}</b>
             </div>
           ))}
         </div>
         <p className="mb-5 text-sm text-[#6b7b73]">
-          Menu value {money(s.menuValueCents)} · Rescue Bites service fees paid by customers {money(s.serviceFeesCents)} · Awaiting pickup {s.awaitingPickup} ·
+          Menu value {money(s.menuValueCents)} · Last Bite service fees paid by customers {money(s.serviceFeesCents)} · Awaiting pickup {s.awaitingPickup} ·
           Cancelled {s.cancelled} · Not picked up {s.notPickedUp}
         </p>
         <div className="overflow-x-auto">

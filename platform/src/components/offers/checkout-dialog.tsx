@@ -171,13 +171,13 @@ function CheckoutContent({ offer, origin, payment, onClose }: { offer: OfferRow;
           <table className="w-full [&_td]:py-1 [&_td:last-child]:text-right [&_td:last-child]:tabular-nums">
             <tbody>
               <tr><td>{q.quantity} × {offer.title} <span className="text-muted line-through">{money(q.originalUnitCents)}</span> {money(q.unitPriceCents)}</td><td>{money(q.subtotalCents)}</td></tr>
-              <tr><td colSpan={2} className="text-primary-ink">You save {money(q.savingsCents)} ({q.discountPct}% off)</td></tr>
+              <tr><td colSpan={2} className="text-success-ink">You save {money(q.savingsCents)} ({q.discountPct}% off)</td></tr>
               <tr><td>Service fee ({pct(q.serviceFeeBps)})</td><td>{money(q.serviceFeeCents)}</td></tr>
               <tr><td>WA sales tax ({pct(q.taxRateBps)})</td><td>{money(q.taxCents)}</td></tr>
               <tr className="border-t border-line text-base font-bold"><td className="pt-2">Total</td><td className="pt-2">{money(q.totalCents)}</td></tr>
               {creditCents > 0 && (
                 <>
-                  <tr className="text-primary-ink"><td>Rescue Bites credit applied</td><td>−{money(creditCents)}</td></tr>
+                  <tr className="text-success-ink"><td>Last Bite credit applied</td><td>−{money(creditCents)}</td></tr>
                   <tr className="font-bold"><td>{cardCents ? 'Card (charged at pickup)' : 'Due'}</td><td>{money(cardCents)}</td></tr>
                 </>
               )}
@@ -191,7 +191,7 @@ function CheckoutContent({ offer, origin, payment, onClose }: { offer: OfferRow;
       <SectionLabel>Payment</SectionLabel>
       {balance > 0 && (
         <div className="mb-3 rounded-xl border border-accent/30 bg-accent-soft/50 p-3">
-          <Checkbox checked={useCredit} onChange={(e) => setUseCredit(e.target.checked)} label={<>Use my Rescue Bites credit · <b>{money(balance)}</b> available</>} />
+          <Checkbox checked={useCredit} onChange={(e) => setUseCredit(e.target.checked)} label={<>Use my Last Bite credit · <b>{money(balance)}</b> available</>} />
           {useCredit && (
             <div className="mt-2 flex items-center gap-2 text-sm">
               <span className="text-muted">Apply $</span>
@@ -247,7 +247,7 @@ function Confirmation({ order, onClose }: { order: OrderConfirmation; onClose: (
           Your food is secured. You just rescued {order.quantity === 1 ? 'a meal' : `${order.quantity} meals`} from going to waste.
         </p>
         {order.pin && (
-          <div className="my-5 rounded-card bg-grad p-5 text-[#04130d]">
+          <div className="my-5 rounded-card bg-grad p-5 text-[#121316]">
             <small className="mb-2 block text-xs font-bold tracking-widest uppercase opacity-70">Your pickup PIN</small>
             <PinTiles pin={order.pin} />
             <div className="mt-2 text-sm opacity-90">Show this PIN at the counter</div>
@@ -261,7 +261,7 @@ function Confirmation({ order, onClose }: { order: OrderConfirmation; onClose: (
           Pick up by <b>{fmtTime(order.pickupEnd)}</b> · <Countdown until={order.pickupEnd} />
           <br />
           {order.creditAppliedCents >= order.totalCents
-            ? <>Paid with your Rescue Bites credit.</>
+            ? <>Paid with your Last Bite credit.</>
             : <>💳 {order.cardLabel} will be charged <b>{money(order.totalCents - order.creditAppliedCents)}</b> only when the restaurant enters your PIN.</>}
         </div>
         <div className="mt-5 flex flex-wrap justify-center gap-2">

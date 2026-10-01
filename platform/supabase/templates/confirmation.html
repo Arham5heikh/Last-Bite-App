@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
-<title>Confirm your email for Rescue Bites</title>
+<title>Confirm your email for Last Bite</title>
 <!--
-  Rescue Bites sign-up confirmation email (Supabase Auth → Emails → "Confirm signup").
+  Last Bite sign-up confirmation email (Supabase Auth → Emails → "Confirm signup").
   Email apps ignore most CSS, so the layout is tables with inline styles. The logo is a PNG
   (email apps don't show SVG); npm run email:template swaps its address for one that works
   before the site is online. See "Branded emails" in README.md.
@@ -24,8 +24,8 @@
         <tr>
           <td align="center" style="padding:0 0 22px;">
             <a href="{{ .SiteURL }}" style="text-decoration:none;">
-              <img src="{{ .SiteURL }}/assets/email-logo.png" width="280" height="58" alt="Rescue Bites"
-                style="display:block;width:280px;height:auto;border:0;font:800 26px Arial,Helvetica,sans-serif;color:#EA580C;">
+              <img src="{{ .SiteURL }}/assets/email-logo.png" width="280" height="58" alt="Last Bite"
+                style="display:block;width:280px;height:auto;border:0;font:800 26px Arial,Helvetica,sans-serif;color:#E65F00;">
             </a>
           </td>
         </tr>
@@ -35,7 +35,7 @@
           <td style="background:#FFFFFF;border-radius:24px;overflow:hidden;box-shadow:0 8px 30px rgba(194,65,12,0.10);">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td bgcolor="#F97316" style="background:#F97316;background-image:linear-gradient(135deg,#FDBA74 0%,#F97316 50%,#C2410C 100%);border-radius:24px 24px 0 0;padding:36px 32px 32px;text-align:center;">
+                <td bgcolor="#FF6B00" style="background:#FF6B00;background-image:linear-gradient(135deg,#FDBA74 0%,#FF6B00 50%,#C2410C 100%);border-radius:24px 24px 0 0;padding:36px 32px 32px;text-align:center;">
                   <div style="font-size:48px;line-height:1;">🥡</div>
                   <h1 style="margin:14px 0 0;font:800 28px/1.2 Arial,Helvetica,sans-serif;color:#FFFFFF;letter-spacing:-0.3px;">
                     Welcome{{ if .Data.username }}, {{ .Data.username }}{{ end }}!
@@ -48,8 +48,8 @@
               <tr>
                 <td style="padding:32px 36px 8px;font:16px/1.6 Arial,Helvetica,sans-serif;color:#1C1917;">
                   <p style="margin:0 0 14px;">
-                    {{ if eq .Data.role "restaurant" }}Thanks for signing up{{ if .Data.restaurant }} <b>{{ .Data.restaurant.name }}</b>{{ end }} with Rescue Bites.
-                    Confirm your email to open your restaurant dashboard and post your first offer.{{ else }}Thanks for joining Rescue Bites. Confirm your email and you're ready to grab
+                    {{ if eq .Data.role "restaurant" }}Thanks for signing up{{ if .Data.restaurant }} <b>{{ .Data.restaurant.name }}</b>{{ end }} with Last Bite.
+                    Confirm your email to open your restaurant dashboard and post your first offer.{{ else }}Thanks for joining Last Bite. Confirm your email and you're ready to grab
                     wrong orders, end-of-day extras and more from restaurants near you.{{ end }}
                   </p>
                 </td>
@@ -60,7 +60,7 @@
                 <td align="center" style="padding:10px 36px 8px;">
                   <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                      <td align="center" bgcolor="#EA580C" style="border-radius:999px;background:#EA580C;">
+                      <td align="center" bgcolor="#E65F00" style="border-radius:999px;background:#E65F00;">
                         <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"
                           style="display:inline-block;padding:16px 38px;font:800 17px Arial,Helvetica,sans-serif;color:#FFFFFF;text-decoration:none;border-radius:999px;">
                           Confirm my email
@@ -106,7 +106,7 @@
               <tr>
                 <td style="padding:22px 36px 30px;font:13px/1.6 Arial,Helvetica,sans-serif;color:#78716C;">
                   Button not working? Copy this link into your browser:<br>
-                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" style="color:#EA580C;word-break:break-all;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email</a>
+                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" style="color:#E65F00;word-break:break-all;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email</a>
                 </td>
               </tr>
             </table>
@@ -116,10 +116,10 @@
         <!-- Footer -->
         <tr>
           <td align="center" style="padding:24px 20px 0;font:12px/1.6 Arial,Helvetica,sans-serif;color:#A8A29E;">
-            You're getting this email because {{ .Email }} was used to sign up for Rescue Bites.<br>
+            You're getting this email because {{ .Email }} was used to sign up for Last Bite.<br>
             Didn't sign up? Just ignore this email and no account will be activated.<br><br>
-            <b style="color:#78716C;">Rescue Bites</b> · Good food, saved · Greater Seattle, WA<br>
-            <a href="mailto:support@rescuebites.app" style="color:#A8A29E;">support@rescuebites.app</a>
+            <b style="color:#78716C;">Last Bite</b> · Good food, saved · Greater Seattle, WA<br>
+            <a href="mailto:support@lastbite.ca" style="color:#A8A29E;">support@lastbite.ca</a>
           </td>
         </tr>
 

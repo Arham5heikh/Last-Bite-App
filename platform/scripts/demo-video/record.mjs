@@ -1,4 +1,4 @@
-// Records the "See Rescue Bites in action" tours (public/videos/), timed to the spoken narration.
+// Records the "See Last Bite in action" tours (public/videos/), timed to the spoken narration.
 // Full steps are in scripts/demo-video/README.md. This step needs the app running on fresh demo data
 // and .video-tmp/voice/durations.json from voice.py; it writes .video-tmp/<tour>-raw.webm and <tour>-cues.json.
 //
@@ -12,7 +12,7 @@ const OUT = path.resolve('.video-tmp');
 const DURATIONS = JSON.parse(fs.readFileSync(path.join(OUT, 'voice/durations.json'), 'utf8'));
 const LOGO = fs.readFileSync(new URL('../../public/assets/logo-dark.svg', import.meta.url), 'utf8');
 const SIZE = { width: 1280, height: 720 };
-const PASSWORD = 'RescueBites123';
+const PASSWORD = 'LastBite123';
 fs.mkdirSync(OUT, { recursive: true });
 
 // Pointer and click ripple, injected into every page.
@@ -93,7 +93,7 @@ function narrator(tour) {
   };
 }
 
-// End screen: fades in over the last page, pops in the Rescue Bites logo piece by piece and says goodbye.
+// End screen: fades in over the last page, pops in the Last Bite logo piece by piece and says goodbye.
 const OUTRO = {
   customer: { headline: 'Happy rescuing!', line: 'Great food. Great prices. Less waste.', pill: 'Free to join · Greater Seattle' },
   restaurant: { headline: 'Happy selling!', line: 'Less waste. More revenue.', pill: 'Free to join · Paid through Stripe' },

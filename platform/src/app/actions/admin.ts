@@ -79,7 +79,7 @@ export async function deleteUser(input: unknown) {
   });
 }
 
-// Goodwill platform credit, funded by Rescue Bites.
+// Goodwill platform credit, funded by Last Bite.
 export async function issueCredit(input: unknown) {
   return action(async () => {
     const me = await requireActor('admin');

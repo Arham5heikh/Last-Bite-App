@@ -79,7 +79,7 @@ export default function OffersMap({ offers, origin, config, fitKey, onOpen }: {
               <div style="flex:1;min-width:0"><b style="font-size:13px">${esc(o.title)}</b>
                 <div style="font-size:13px"><b style="color:var(--color-primary-ink)">${money(o.price_cents)}</b> <s style="color:var(--color-muted)">${money(o.original_price_cents)}</s> <b style="color:var(--color-accent-ink)">-${o.discount_pct}%</b></div>
                 <div style="font-size:11px;color:var(--color-muted)">${o.quantity_available} left · ⏳ ${timeLeft(o.pickup_end)}${o.distance_miles != null ? ` · ${o.distance_miles} mi` : ''}</div></div>
-              <button data-open="${o.id}" style="border:0;border-radius:999px;padding:6px 12px;font-weight:700;background:linear-gradient(135deg,#34d399,#059669);color:#04130d;cursor:pointer">View</button>
+              <button data-open="${o.id}" style="border:0;border-radius:999px;padding:6px 12px;font-weight:700;background:linear-gradient(135deg,#ff8a33,#ff6b00);color:#121316;cursor:pointer">View</button>
             </div>`).join('')}
         </div>`;
       L.marker([r.lat, r.lng], { icon, title: r.restaurant_name, riseOnHover: true }).bindPopup(html, { maxWidth: 340, minWidth: 260 }).addTo(group);

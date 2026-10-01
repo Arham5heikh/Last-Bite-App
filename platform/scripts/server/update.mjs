@@ -1,5 +1,5 @@
 // npm run update [-- --no-pull] [-- --force]
-// On a Linux server running the rescuebites systemd service (or the old biteback one), this runs update.sh, which
+// On a Linux server running the lastbite systemd service (or the old biteback one), this runs update.sh, which
 // builds while the site keeps running and then restarts the service. Anywhere else (Windows, macOS, or a machine
 // without the service) it pulls the latest code, installs packages if they changed and builds; then start the app
 // with npm start. Stop the app first, since the build replaces the files it is serving.
@@ -29,7 +29,7 @@ function git(...gitArgs) {
 
 function hasService() {
   if (process.platform !== 'linux') return false;
-  return ['rescuebites', 'biteback'].some((name) => spawnSync('systemctl', ['cat', name], { stdio: 'ignore' }).status === 0);
+  return ['lastbite', 'biteback'].some((name) => spawnSync('systemctl', ['cat', name], { stdio: 'ignore' }).status === 0);
 }
 
 // True if something (npm start or npm run dev) is answering on the app's port.
@@ -58,7 +58,7 @@ let isGit = true;
 try { git('rev-parse', '--git-dir'); } catch { isGit = false; }
 if (pull && !isGit) {
   fail(`this folder isn't a git clone, so there are no updates to pull. Get the latest code with
-  git clone https://github.com/umershahid84/RescueBites.git
+  git clone https://github.com/umershahid84/LastBite.git
 or run npm run update -- --no-pull to just rebuild what is here.`);
 }
 

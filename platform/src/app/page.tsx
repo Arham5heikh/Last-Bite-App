@@ -33,7 +33,7 @@ export default function LandingPage() {
               <span className="grad-text">Save up to 70%.</span>
             </h1>
             <p className="mb-7 max-w-[40ch] text-[1.18rem] text-ink-2">
-              Wrong orders, late deliveries, meals nobody picked up. Local restaurants post them on Rescue Bites at a discount, and you grab them
+              Wrong orders, late deliveries, meals nobody picked up. Local restaurants post them on Last Bite at a discount, and you grab them
               before they go to waste.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -71,7 +71,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="absolute -right-3 -bottom-14 rotate-3 rounded-[22px] bg-grad px-5 py-4 text-center text-[#04130d] shadow-pop">
+            <div className="absolute -right-3 -bottom-14 rotate-3 rounded-[22px] bg-grad px-5 py-4 text-center text-[#121316] shadow-pop">
               <small className="block text-[0.72rem] font-semibold tracking-[0.08em] uppercase opacity-70">Your pickup PIN</small>
               <b className="ml-[0.25em] font-heading text-[1.9rem] leading-tight font-extrabold tracking-[0.25em]">4827</b>
             </div>
@@ -118,7 +118,7 @@ export default function LandingPage() {
         <div className="container-page">
           <div className="mb-6 text-center">
             <span className="inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-[0.8rem] font-bold text-primary-ink">▶ See it in action</span>
-            <h2 className="mt-3.5 text-[clamp(1.4rem,2.6vw,2rem)] font-extrabold">Watch Rescue Bites in about a minute</h2>
+            <h2 className="mt-3.5 text-[clamp(1.4rem,2.6vw,2rem)] font-extrabold">Watch Last Bite in about a minute</h2>
             <p className="m-0 text-muted">A quick narrated tour of ordering a meal, and of the restaurant side. Turn your sound on.</p>
           </div>
           <DemoVideoShowcase />
