@@ -94,7 +94,7 @@ export function PosReceipt({ r }: { r: Receipt }) {
           <div className="b pos-thanks">Thank you for rescuing food!</div>
           <p className="small-print">
             Your card is authorized when you order and charged only when the restaurant confirms pickup with your PIN. Orders not picked up are
-            released without charge. Times in Pacific Time.
+            released without charge. Times in Newfoundland Time.
           </p>
           <div className="small-print">support@lastbite.ca</div>
         </div>

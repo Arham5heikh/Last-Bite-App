@@ -5,7 +5,7 @@ import { AppError } from '@/lib/errors';
 import { reportData } from './data';
 import { todayIn } from './time';
 
-// Daily report for the signed-in restaurant (date: YYYY-MM-DD in Pacific Time, default today).
+// Daily report for the signed-in restaurant (date: YYYY-MM-DD in Newfoundland Time, default today).
 export async function restaurantReport(dateParam: string | null | undefined) {
   const viewer = await getViewer();
   if (!viewer || viewer.role !== 'restaurant' || !viewer.restaurant) throw new AppError(401, 'Please log in as a restaurant.');

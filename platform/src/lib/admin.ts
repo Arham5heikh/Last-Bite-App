@@ -31,7 +31,7 @@ async function all<T>(query: (from: number, to: number) => PromiseLike<{ data: T
   }
 }
 
-// Date range from ?from=YYYY-MM-DD&to=YYYY-MM-DD (inclusive, Pacific Time), default: last `days` days.
+// Date range from ?from=YYYY-MM-DD&to=YYYY-MM-DD (inclusive, Newfoundland Time), default: last `days` days.
 export function range(params: URLSearchParams, days = 30) {
   const valid = (d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d));
   const today = todayIn(tz());

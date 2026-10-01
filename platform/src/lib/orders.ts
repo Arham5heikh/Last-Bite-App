@@ -221,7 +221,7 @@ export async function completePickup(claimed: { id: number; paymentRef: string |
 
   if (claimed.paymentRef) {
     try {
-      // Destination charge: Last Bite keeps the service fee and sales tax; Stripe sends the rest.
+      // Destination charge: Last Bite keeps the service fee and HST; Stripe sends the rest.
       const applicationFee = destination ? Math.max(0, cardCents - share) : null;
       charge = await payments().capture(claimed.paymentRef, { applicationFeeCents: applicationFee, idempotencyKey: `capture-${order.id}` });
     } catch (err) {

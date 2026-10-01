@@ -4,7 +4,7 @@
 // Restaurants are paid through Stripe Connect (Express accounts):
 //   * When the restaurant's account can receive transfers at checkout, the card is authorized as a
 //     *destination charge* (transfer_data.destination). At capture, Last Bite keeps a platform
-//     application fee (service fee + sales tax Last Bite remits) and Stripe transfers the rest.
+//     application fee (service fee + HST Last Bite remits) and Stripe transfers the rest.
 //   * Otherwise the charge stays on the platform and the restaurant's share is sent later with a
 //     separate transfer (automatically at pickup if they have connected by then, or from the admin console).
 //   * Platform credit is funded by Last Bite, so when credit covers part of the food, Last Bite tops

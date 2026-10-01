@@ -1,6 +1,6 @@
 # Demo videos
 
-The narrated tours in `public/videos/` (home page, **How it works** on the deals page, **Watch the tour** on the restaurant dashboard) are recorded from the real app and end on an animated Last Bite logo ("Happy rescuing!" / "Happy selling!"). The voice-over is generated with [Kokoro](https://github.com/thewh1teagle/kokoro-onnx), an open-source text-to-speech model (Apache 2.0) that runs on your own computer. The upbeat background music is an original tune written in code by `music.py` and played with real instrument samples by [FluidSynth](https://www.fluidsynth.org/) and the FluidR3 General MIDI SoundFont (MIT licence), so no music licences are needed. It dips automatically while the narrator speaks.
+The narrated tours in `public/videos/` (home page, **How it works** on the deals page, **Watch the tour** on the restaurant dashboard) are recorded from the real app and end on an animated Last Bite logo ("Happy eating, St. John's!" / "Happy cooking, zero waste."). The voice-over is generated with [Kokoro](https://github.com/thewh1teagle/kokoro-onnx), an open-source text-to-speech model (Apache 2.0) that runs on your own computer. The upbeat background music is an original tune written in code by `music.py` and played with real instrument samples by [FluidSynth](https://www.fluidsynth.org/) and the FluidR3 General MIDI SoundFont (MIT licence), so no music licences are needed. It dips automatically while the narrator speaks.
 
 To change what is said, edit `narration.json`, then rebuild:
 
@@ -20,11 +20,11 @@ pip install mido
 python scripts/demo-video/music.py    # → .video-tmp/*-music.wav
 
 # 4. Mix and encode (ffmpeg with libx264, libvpx-vp9 and libopus)
-node scripts/demo-video/build.mjs     # → public/videos/*-tour.{mp4,webm,vtt,jpg}
+node scripts/demo-video/build.mjs     # → public/videos/*-tour.{mp4,webm,jpg}
 ```
 
-`build.mjs` prints each video's length; update `length` in `src/components/app/demo-video.tsx` if it changed. The `.vtt` files are optional subtitles (off by default in the player) with the same words as the voice-over. The bell in the restaurant tour is the dashboard's own order bell (`src/components/restaurant/bell.ts`), recreated in `voice.py`.
+`build.mjs` prints each video's length; update `length` in `src/components/app/demo-video.tsx` if it changed. No captions or subtitles are produced. The bell in the restaurant tour is the dashboard's own order bell (`src/components/restaurant/bell.ts`), recreated in `voice.py`.
 
 The music's volume is `MUSIC_GAIN` in `build.mjs`; its tempo, chords, instruments and the whistled hook are at the top of `music.py`. The end screen's wording is `OUTRO` in `record.mjs`.
 
-Words the voice would spell out letter by letter (it reads capitals as abbreviations) go in `pronounce` in `narration.json`: `"PIN": "pin"` makes it say the word, while the subtitles keep "PIN". Voice and speed are set at the top of `narration.json`: `af_heart`, Kokoro's most natural-sounding US English voice, at normal speed. Other natural voices are `af_bella` and `bf_emma` (British); a blend of several can be given with weights, e.g. `{ "af_heart": 0.6, "af_sarah": 0.4 }`.
+Words the voice would spell out letter by letter (it reads capitals as abbreviations) go in `pronounce` in `narration.json`: `"PIN": "pin"` makes it say the word. Voice and speed are set at the top of `narration.json`: `af_heart`, Kokoro's most natural-sounding US English voice, at normal speed. Other natural voices are `af_bella` and `bf_emma` (British); a blend of several can be given with weights, e.g. `{ "af_heart": 0.6, "af_sarah": 0.4 }`.

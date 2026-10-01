@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 const tz = 'America/St_Johns';
-export const todayPT = () => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
+export const todayLocal = () => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
 export const daysAgo = (n: number) => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(Date.now() - n * 86400000));
 export type Range = { from: string; to: string };
 
@@ -33,7 +33,7 @@ export async function run(fn: () => Promise<{ ok: boolean; error?: string }>, su
 }
 
 export function RangePicker({ range, onChange }: { range: Range; onChange: (r: Range) => void }) {
-  const today = todayPT();
+  const today = todayLocal();
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
       <label className="flex items-center gap-2">From

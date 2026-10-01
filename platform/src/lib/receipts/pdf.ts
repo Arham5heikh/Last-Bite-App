@@ -176,7 +176,7 @@ function drawPosReceipt(doc: Doc, rc: Receipt) {
 
   center('THANK YOU FOR RESCUING FOOD!', 'monoBold', 8, { after: 4 });
   small('Your card is authorized when you order and charged only when the restaurant confirms pickup with your PIN. '
-    + 'Orders not picked up are released without charge. Times in Pacific Time.', { align: 'center', size: 6.2, after: 3 });
+    + 'Orders not picked up are released without charge. Times in Newfoundland Time.', { align: 'center', size: 6.2, after: 3 });
   center('support@lastbite.ca', 'mono', 6.6, { after: 0 });
   return y;
 }
@@ -268,7 +268,7 @@ export function reportPdf(rep: Report) {
     y += 18;
   });
   doc.font('regular').fontSize(8).fillColor(MUTED).text(
-    `Sales totals include orders picked up (and charged) on this day. Times in Pacific Time. Generated ${rep.generatedAtText}.`,
+    `Sales totals include orders picked up (and charged) on this day. Times in Newfoundland Time. Generated ${rep.generatedAtText}.`,
     L, doc.page.height - 50, { width: W, lineBreak: false },
   );
   return finish(doc);

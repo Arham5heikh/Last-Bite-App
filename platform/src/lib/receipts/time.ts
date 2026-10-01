@@ -1,4 +1,4 @@
-// Time-zone helpers for receipts and reports (Pacific Time by default).
+// Time-zone helpers for receipts and reports (Newfoundland Time by default).
 
 export function formatDateTime(iso: string | null | undefined, timeZone: string) {
   if (!iso) return '';

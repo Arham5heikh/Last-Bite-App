@@ -75,7 +75,7 @@ export function ReportView({ report: rep, today }: { report: Report; today: stri
             </tbody>
           </table>
         </div>
-        <p className="mt-4 text-xs text-[#6b7b73]">Sales totals include orders picked up (and charged) on this day. Times in Pacific Time. Generated {rep.generatedAtText}.</p>
+        <p className="mt-4 text-xs text-[#6b7b73]">Sales totals include orders picked up (and charged) on this day. Times in Newfoundland Time. Generated {rep.generatedAtText}.</p>
       </Paper>
     </main>
   );

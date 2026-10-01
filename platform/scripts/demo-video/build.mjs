@@ -1,6 +1,6 @@
 // Mixes the voice-over and background music into the recorded tours and encodes them for the web (see README.md in this folder).
 // Needs an ffmpeg with libx264, libvpx-vp9 and libopus (set FFMPEG=/path/to/ffmpeg if it isn't on PATH).
-// Writes public/videos/<tour>-tour.{mp4,webm,vtt,jpg}.
+// Writes public/videos/<tour>-tour.{mp4,webm,jpg}. No captions or subtitles are produced.
 import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,15 +9,12 @@ const FFMPEG = process.env.FFMPEG || 'ffmpeg';
 const TMP = path.resolve('.video-tmp');
 const OUT = path.resolve('public/videos');
 const TRIM = 0.6; // the first moments of a recording are a blank page
-const script = JSON.parse(fs.readFileSync(new URL('./narration.json', import.meta.url), 'utf8'));
-const durations = JSON.parse(fs.readFileSync(path.join(TMP, 'voice/durations.json'), 'utf8'));
 // Poster frame: shortly after this line starts.
 const POSTER = { customer: 'pin', restaurant: 'bell' };
 const MUSIC_GAIN = 0.16; // background music level before ducking
 const LOUDNESS = 'I=-16:TP=-1.5:LRA=11';
 
 const ffmpeg = (args) => execFileSync(FFMPEG, ['-v', 'error', '-y', ...args], { stdio: 'inherit' });
-const vttTime = (s) => new Date(Math.max(0, s) * 1000).toISOString().slice(11, 23);
 
 function length(file) {
   const [, h, m, s] = /Duration: (\d+):(\d+):([\d.]+)/.exec(spawnSync(FFMPEG, ['-i', file]).stderr.toString());
@@ -28,7 +25,6 @@ function length(file) {
 for (const tour of ['customer', 'restaurant']) {
   const raw = path.join(TMP, `${tour}-raw.webm`);
   const cues = JSON.parse(fs.readFileSync(path.join(TMP, `${tour}-cues.json`), 'utf8'));
-  const lines = new Map(script[tour].map((l) => [l.id, l.text]));
 
   // Voice lines and sound effects: one input per cue, each delayed to its moment in the video.
   const sounds = cues.filter((c) => !c.marker);
@@ -65,16 +61,8 @@ for (const tour of ['customer', 'restaurant']) {
   ffmpeg([...common, '-vf', 'fps=25', '-c:v', 'libvpx-vp9', '-crf', '40', '-b:v', '0', '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2',
     '-c:a', 'libopus', '-b:a', '96k', '-ac', '2', `${base}.webm`]);
 
-  // Subtitles (off by default in the player) with the same words as the voice-over.
-  const vtt = ['WEBVTT', ''];
-  for (const c of cues.filter((x) => !x.sound && !x.marker)) {
-    const start = c.at - TRIM;
-    vtt.push(`${vttTime(start)} --> ${vttTime(start + durations[`${tour}-${c.id}`])}`, lines.get(c.id), '');
-  }
-  fs.writeFileSync(`${base}.vtt`, vtt.join('\n'));
-
   const poster = cues.find((c) => c.id === POSTER[tour] && !c.sound && !c.marker);
   ffmpeg(['-ss', String(poster.at - TRIM + 1.5), '-i', `${base}.mp4`, '-frames:v', '1', '-q:v', '4', `${base}.jpg`]);
 
-  console.log(`${tour}: ${length(`${base}.mp4`)} → ${base}.{mp4,webm,vtt,jpg}`);
+  console.log(`${tour}: ${length(`${base}.mp4`)} → ${base}.{mp4,webm,jpg}`);
 }

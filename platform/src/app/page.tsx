@@ -51,12 +51,12 @@ export default function LandingPage() {
           <div className="relative mx-auto w-full max-w-[380px]" aria-hidden>
             <div className="group -rotate-2 overflow-hidden rounded-[28px] border border-line bg-surface shadow-pop transition duration-300 hover:-translate-y-1 hover:rotate-0">
               <div className="relative grid h-[150px] place-items-center text-[72px]" style={{ background: 'linear-gradient(135deg, hsl(28 35% 18%), hsl(68 40% 14%))' }}>
-                <span className="drop-shadow-lg transition duration-300 group-hover:scale-110 group-hover:-rotate-6">🍜</span>
-                <span className="absolute top-3 left-3 rounded-full bg-accent px-3 py-1 font-heading text-sm font-extrabold text-[#111]">-50%</span>
+                <span className="drop-shadow-lg transition duration-300 group-hover:scale-110 group-hover:-rotate-6">🐟</span>
+                <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 font-heading text-sm font-extrabold text-[#121316]">-50%</span>
                 <span className="absolute top-3 right-3 rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-[#1c1203]">2 left</span>
               </div>
               <div className="p-5">
-                <h3 className="m-0 text-lg font-bold">Large Beef Pho</h3>
+                <h3 className="m-0 text-lg font-bold">Cod &amp; Chips (2 pc)</h3>
                 <div className="text-sm text-muted">Harbourside Fish &amp; Chips · St. John&apos;s</div>
                 <div className="mt-2 flex gap-4 text-sm text-ink-2"><span>🕒 Today 5:00 – 8:00 PM</span><span>📍 0.6 km</span></div>
                 <div className="mt-3 flex gap-2">
@@ -64,8 +64,8 @@ export default function LandingPage() {
                   <span className="rounded-full border border-primary/30 px-2.5 py-0.5 text-xs font-bold text-primary-ink">dairy-free</span>
                 </div>
                 <div className="mt-4 flex items-center gap-2 border-t border-dashed border-line pt-3">
-                  <span className="font-heading text-2xl font-extrabold">$8.48</span>
-                  <span className="text-muted line-through">$16.95</span>
+                  <span className="font-heading text-2xl font-extrabold text-success">$9.50</span>
+                  <span className="text-muted line-through">$19.00</span>
                   <span className="flex-1" />
                   <span className={buttonVariants({ size: 'sm' })}>Order</span>
                 </div>

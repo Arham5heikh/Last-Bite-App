@@ -64,7 +64,7 @@ describe.skipIf(!available)('checkout', () => {
     const shop = await restaurantWithOffer({ quantity: 5 });
     const c = await signUp('customer');
     await giveCredit(c.id, 2000);
-    const total = 500 + 25 + 52;
+    const total = 500 + 25 + 79; // food + 5% fee + 15% HST on both
     await expect(orders.checkout(c.id, { offerId: shop.offer.id, quantity: 1, creditCents: total - 20, newCard: visa })).rejects.toThrow('at least $0.50');
     // Credit covering everything needs no card at all.
     const res = await orders.checkout(c.id, { offerId: shop.offer.id, quantity: 1, creditCents: total, cardId: null, newCard: null });

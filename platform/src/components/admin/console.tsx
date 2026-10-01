@@ -10,7 +10,7 @@ import { OverviewPanel } from './overview';
 import { PayoutsPanel } from './payouts';
 import { RestaurantsPanel } from './restaurants';
 import { SettingsPanel } from './settings';
-import { daysAgo, todayPT, type Range } from './shared';
+import { daysAgo, todayLocal, type Range } from './shared';
 import { TaxPanel } from './tax';
 import { UsersPanel } from './users';
 
@@ -21,7 +21,7 @@ const TABS = [
 
 export function AdminConsole({ adminId }: { adminId: string }) {
   const [tab, setTab] = useState('overview');
-  const [range, setRange] = useState<Range>({ from: daysAgo(29), to: todayPT() });
+  const [range, setRange] = useState<Range>({ from: daysAgo(29), to: todayLocal() });
   useEffect(() => {
     const h = location.hash.slice(1);
     // The URL hash only exists in the browser.

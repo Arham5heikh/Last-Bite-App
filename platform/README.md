@@ -7,7 +7,7 @@
 
 # Last Bite: Reduce Food Waste
 
-Last Bite is a marketplace where restaurants in greater Seattle sell food that would otherwise be thrown away (wrong orders, delayed deliveries, orders nobody picked up, end-of-day surplus) at a discount they choose. Customers reserve it online, pay with a card hold, and pick it up with a 4-digit PIN. The card is charged only when the restaurant enters the PIN.
+Last Bite is a marketplace where restaurants in St. John's, Newfoundland and Labrador sell food that would otherwise be thrown away (wrong orders, delayed deliveries, orders nobody picked up, end-of-day surplus) at a discount they choose. Customers reserve it online, pay with a card hold, and pick it up with a 4-digit PIN. The card is charged only when the restaurant enters the PIN.
 
 ## Tech stack
 
@@ -18,7 +18,7 @@ Last Bite is a marketplace where restaurants in greater Seattle sell food that w
 | **Database & Auth** | Supabase: PostgreSQL with **PostGIS**, **Row Level Security** on every table, **Supabase Auth** (email + password; log in with email or user name), Supabase Storage for food photos, `pg_cron` for cleanup |
 | **State & real-time** | TanStack Query for client data, **Supabase Realtime** channels (WebSockets) for the live offer feed, the restaurant's new-order bell and live order status |
 | **Payments** | **Stripe Connect** (Express accounts): manual-capture card holds as destination charges with a **platform application fee**, transfers, reversals and refunds. A built-in mock processor runs when no Stripe keys are set |
-| **Maps & location** | Leaflet with OpenStreetMap tiles, **PostGIS** spatial search (`ST_DWithin` / `ST_Distance` on `geography`), **haversine** distance in the browser, 186 Puget Sound ZIP codes |
+| **Maps & location** | Leaflet with OpenStreetMap tiles, **PostGIS** spatial search (`ST_DWithin` / `ST_Distance` on `geography`), **haversine** distance in the browser (km), the Northeast Avalon postal areas (A1A–A1X) |
 | **Documents** | pdfkit: 80 mm point-of-sale receipts and landscape daily reports; CSV exports |
 | **Tests** | Vitest: unit tests, integration tests against local Supabase (sign-up rules, RLS, checkout, pickup, refunds, payouts), Stripe request checks against `stripe-mock` |
 
@@ -26,8 +26,8 @@ Last Bite is a marketplace where restaurants in greater Seattle sell food that w
 
 **Customers**
 1. Sign up free with an **email, user name and password**, after reading and accepting the Customer Terms and Privacy Policy. **Declining creates no account.**
-2. Browse deals as a **list** or on an **interactive map**, updated live. Search any city or ZIP code in King, Pierce, Thurston, Snohomish and Kitsap counties (Seattle, Des Moines, Kent, Federal Way, Tacoma, Fife, Olympia and more) or use your location, and filter by diet and distance.
-3. Choose a quantity (never more than the restaurant made available) and see the total before ordering: **food price + 5% service fee + WA sales tax**.
+2. Browse deals as a **list** or on an **interactive map**, updated live. Search any town or postal code around the Northeast Avalon (St. John's, Mount Pearl, Paradise, Conception Bay South, Torbay, Portugal Cove–St. Philip's and more) or use your location, and filter by diet and distance.
+3. Choose a quantity (never more than the restaurant made available) and see the total before ordering: **food price + 5% service fee + 15% HST** (in Canadian dollars).
 4. Pay with a saved or new card, optionally using **Last Bite platform credit** (the card covers the rest, at least $0.50).
 5. A confetti screen shows the **4-digit PIN**. A hold is placed on the card; **it is charged only at pickup**. Cancel any time before pickup at no charge.
 6. Every order has a **point-of-sale receipt** (web, print and PDF).
@@ -40,15 +40,15 @@ Last Bite is a marketplace where restaurants in greater Seattle sell food that w
 5. **Payouts tab:** connect Stripe (Express onboarding), see earnings and every transfer with its system-assigned **invoice number** and Stripe transaction ID.
 6. **Daily report:** sales, meals rescued, discounts, tax and every order for any day, with print, PDF and CSV.
 
-**Demo videos:** short narrated walkthroughs (a friendly voice-over and upbeat background music, with optional subtitles) for customers and restaurants play on the home page ("See it in action"), behind **How it works** on the deals page and **Watch the tour** on the restaurant dashboard. They live in `public/videos/`; see `scripts/demo-video/README.md` to change the narration or re-record them.
+**Demo videos:** short narrated walkthroughs (a friendly voice-over and upbeat background music, no captions) for customers and restaurants play on the home page ("See it in action"), behind **How it works** on the deals page and **Watch the tour** on the restaurant dashboard. They live in `public/videos/`; see `scripts/demo-video/README.md` to change the narration or re-record them.
 
-**Owner console (`/admin`)**: overview with revenue and a daily chart, restaurant approvals and suspensions, customers (suspend for 5, 10, 15, 20 or 30 days, lifted automatically; delete: accounts with order history are anonymized so sales and tax records stay intact; issue goodwill credit), orders (cancel, **refund by 10/25/50/75/100% or a set amount, to the original payment or as platform credit**, receipt PDF, CSV), live offer moderation, payouts (send what's owed through Stripe or record a manual payout, with a locked invoice number and bank/transaction details), sales tax by location (CSV for the WA excise tax return), settings (service fee, default tax, approval) and an audit log of every admin action.
+**Owner console (`/admin`)**: overview with revenue and a daily chart, restaurant approvals and suspensions, customers (suspend for 5, 10, 15, 20 or 30 days, lifted automatically; delete: accounts with order history are anonymized so sales and tax records stay intact; issue goodwill credit), orders (cancel, **refund by 10/25/50/75/100% or a set amount, to the original payment or as platform credit**, receipt PDF, CSV), live offer moderation, payouts (send what's owed through Stripe or record a manual payout, with a locked invoice number and bank/transaction details), HST by location (CSV for the GST/HST return), settings (service fee, default tax, approval) and an audit log of every admin action.
 
 ## Money flow
 
 | | Customer pays | Restaurant receives | Last Bite keeps |
 |---|---|---|---|
-| **Normal order** | food + 5% fee + tax (charged at pickup) | the food subtotal (Stripe transfer at pickup) | service fee + sales tax (which it remits as marketplace facilitator) |
+| **Normal order** | food + 5% fee + tax (charged at pickup) | the food subtotal (Stripe transfer at pickup) | service fee + HST (where it must collect and remit it) |
 | **Paid partly with platform credit** | the rest by card | still the **full** food subtotal (Last Bite tops up from its balance) | pays for the credit |
 | **Refund to original payment** | money back to their card (credit part back to their balance) | gives up its share (the transfer is partially reversed) | gives up its fee share |
 | **Refund as platform credit** | credit for future orders | keeps its full payment | pays for the credit |
@@ -64,7 +64,7 @@ src/lib/                 Server & shared logic: supabase clients, auth, orders (
                          refunds, payouts), payments (Stripe Connect + mock), receipts (PDF/CSV),
                          admin data, legal documents, pricing, validation
 src/proxy.ts             Session refresh and sign-in redirects (Next.js 16's replacement for middleware)
-supabase/migrations/     Schema, RLS policies, business functions, ZIP data, storage/realtime/cron
+supabase/migrations/     Schema, RLS policies, business functions, postal-area data, storage/realtime/cron
 scripts/                 seed.ts (demo data), create-admin.ts
 tests/                   unit/ and integration/ (Vitest)
 assets/pdf-fonts/        Fonts embedded in PDFs
@@ -133,7 +133,7 @@ npm run dev               # http://localhost:3000
 
 Opening the app through a tunnel or proxy (e.g. VS Code port forwarding, `*.devtunnels.ms`)? Add `TRUSTED_ORIGINS=*.devtunnels.ms,localhost:3000` to `.env.local` and restart (rebuild first if you use `npm start`); otherwise Next.js blocks log-in and other forms as cross-site requests.
 
-Demo logins (password `LastBite123`): customer `demo`, owner `admin`, restaurants `harborpho`, `ballardbread`, `caphilltacos`, `fremontpizza`, `bellevuecurry`, `redmondpoke`, `kirklandsushi` (Stripe connected) and 22 more around the region (`tacomathai`, `olympiacafe`, `desmoinesfish`, ...). Test cards (mock mode): `4242 4242 4242 4242` works; `4000 0000 0000 0002` is declined.
+Demo logins (password `LastBite123`): customer `demo`, owner `admin`, restaurants `no4`, `merchanttavern`, `blueonwater`, `yellowbelly`, `olivers`, `blackcat`, `rocket`, `chinched`, `adelaide`, `terre` (downtown St. John's, Stripe connected) and `pearlbakehouse` (waiting for approval). Test cards (mock mode): `4242 4242 4242 4242` works; `4000 0000 0000 0002` is declined.
 
 Create your real owner account (admins can't sign up on the website):
 
@@ -165,8 +165,6 @@ The installer uses your user account and your Node.js (nvm works), and serves on
 | **Deploy the latest code** | `npm run update` |
 
 **`npm run update`** pulls the latest code, runs `npm ci` if packages changed, and builds the new version **while the site keeps running**. Then it swaps the new build in and restarts, so the site is down for about a second. If the new version doesn't answer, the previous one is put back automatically. If nothing new was pushed, it says so and does nothing. When an update includes database migrations, it reminds you to run `npx supabase db push`.
-
-**Upgrading a server from before the rename to Last Bite** (when the service was called `biteback`): run `npm run update` twice. The first run deploys the new code on the old service; the second replaces the `biteback` service with `lastbite`, keeping its port and settings (or run `npm run service:install` once to switch straight away). Then run `npx supabase db push`, which also renames the database's cleanup job, and `npm run seed` if the server has the demo data: it moves the demo accounts to `@lastbite.test` emails and the `LastBite123` password. In `.env.local`, change `LEGAL_ENTITY_NAME` and `SUPPORT_EMAIL` if they still say BiteBack.
 
 Don't run `npm start` or `npm run build` in the same folder while the service is running: that would replace the build it is serving. Use `npm run dev` for development, `npm run update` to deploy.
 
@@ -202,7 +200,7 @@ Keep **Authentication → URL Configuration → Site URL** set to your site's ad
 
 ## Legal documents
 
-Customer Terms, Restaurant Partner Agreement and Privacy Policy live in `src/lib/legal/documents.ts` (version `2026-09-29.1`, updated for Stripe Connect payouts and Supabase) and are shown at `/legal/...`. When you change the text, bump `LEGAL_VERSION` and add a migration updating `legal_documents`; a test checks they match. Signed-in users are then asked to accept the new version (declining signs them out). Have a Washington-licensed attorney review them before launch.
+Customer Terms, Restaurant Partner Agreement and Privacy Policy live in `src/lib/legal/documents.ts` (version `2026-10-01.1`, written for Newfoundland and Labrador and Canada) and are shown at `/legal/...`. When you change the text, bump `LEGAL_VERSION` and add a migration updating `legal_documents`; a test checks they match. Signed-in users are then asked to accept the new version (declining signs them out). Have a lawyer licensed in Newfoundland and Labrador review them before launch.
 
 ## Upgrading from the first version
 
