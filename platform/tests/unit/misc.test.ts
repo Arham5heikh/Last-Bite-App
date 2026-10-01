@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { code128, PATTERNS } from '@/lib/code128';
-import { distanceMiles } from '@/lib/geo';
+import { distanceKm } from '@/lib/geo';
 import { money, pct, timeLeft } from '@/lib/format';
 import { LEGAL_VERSION, renderDocument, requiredDocuments } from '@/lib/legal/documents';
 import { dayRange, todayIn } from '@/lib/receipts/time';
 
 describe('geo', () => {
-  it('computes haversine distances in miles', () => {
-    // Seattle (Pike Place) to Tacoma (Union Station): about 25 miles.
-    expect(distanceMiles(47.6097, -122.3422, 47.2396, -122.4285)).toBeCloseTo(25.8, 0);
-    expect(distanceMiles(47.6, -122.3, 47.6, -122.3)).toBe(0);
+  it('computes haversine distances in kilometres', () => {
+    // Downtown St. John's to Mount Pearl City Hall: about 8.5 km.
+    expect(distanceKm(47.5615, -52.7126, 47.5189, -52.8058)).toBeCloseTo(8.45, 1);
+    expect(distanceKm(47.56, -52.71, 47.56, -52.71)).toBe(0);
   });
 });
 
 describe('code128', () => {
   it('encodes with start, checksum and stop symbols', () => {
-    const bars = code128('RB-20260929-000064');
+    const bars = code128('LB-20260929-000064');
     // 18 characters + start + checksum + stop; each symbol is 11 modules, the stop is 13.
     expect(bars.reduce((a, b) => a + b, 0)).toBe(20 * 11 + 13);
     expect(PATTERNS).toHaveLength(107);
@@ -44,7 +44,7 @@ describe('Pacific time days', () => {
 });
 
 describe('legal documents', () => {
-  const company = { entity: 'Last Bite <LLC>', email: 'help@example.com', address: 'Seattle', serviceFeePct: 5, graceMinutes: 10 };
+  const company = { entity: 'Last Bite <LLC>', email: 'help@example.com', address: "St. John's", serviceFeePct: 5, graceMinutes: 10 };
   it('lists what each role must accept', () => {
     expect(requiredDocuments('customer').map((d) => d.id)).toEqual(['customer-terms', 'privacy']);
     expect(requiredDocuments('restaurant').map((d) => d.id)).toEqual(['restaurant-agreement', 'privacy']);

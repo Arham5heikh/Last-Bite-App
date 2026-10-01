@@ -1,7 +1,7 @@
 // Display helpers shared by server and client code.
 
 export const money = (cents: number) =>
-  (cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  (cents / 100).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' });
 
 // 1035 -> "10.35%", 500 -> "5%"
 export const pct = (bps: number) => `${(bps / 100).toFixed(2).replace(/\.?0+$/, '')}%`;

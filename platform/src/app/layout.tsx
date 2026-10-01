@@ -38,7 +38,7 @@ const plexMono = localFont({
 
 export const metadata: Metadata = {
   title: { default: 'Last Bite: Rescue good food, save money', template: '%s · Last Bite' },
-  description: 'Last Bite: rescue good restaurant food at a discount around greater Seattle.',
+  description: "Last Bite: rescue good restaurant food at a discount around St. John's, Newfoundland and Labrador.",
 };
 
 export const viewport: Viewport = { themeColor: '#121316' };

@@ -101,9 +101,9 @@ export async function saveRestaurantProfile(input: unknown) {
     const supabase = await supabaseServer();
     let lat = data.lat;
     let lng = data.lng;
-    // Until the owner pins the exact spot, use the ZIP code's center.
+    // Until the owner pins the exact spot, use the center of the postal area (first three characters).
     if (lat === null || lng === null) {
-      const area = maybe(await supabase.rpc('resolve_area', { p_query: data.zip.slice(0, 5) }))?.[0];
+      const area = maybe(await supabase.rpc('resolve_area', { p_query: data.zip.slice(0, 3) }))?.[0];
       if (area) ({ lat, lng } = area);
     }
     check(

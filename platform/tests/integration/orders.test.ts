@@ -28,7 +28,7 @@ describe.skipIf(!available)('checkout', () => {
     expect(o.status).toBe('reserved');
     expect(o.payment_ref).toMatch(/^pi_mock_/);
     expect(o.destination_account).toMatch(/^acct_mock_/); // destination charge to the restaurant's Connect account
-    expect(o.total_cents).toBe(500 * 2 + 50 + 104); // $10 at 50% off x2 + 5% fee + 10.35% tax
+    expect(o.total_cents).toBe(500 * 2 + 50 + 158); // $10 at 50% off x2 + 5% fee + 15% HST on food and fee
     expect(await pinOf(o.id)).toMatch(/^\d{4}$/);
     expect(await offerLeft(shop.offer.id)).toBe(1);
   });

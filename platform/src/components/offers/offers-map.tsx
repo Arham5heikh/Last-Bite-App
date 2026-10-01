@@ -78,7 +78,7 @@ export default function OffersMap({ offers, origin, config, fitKey, onOpen }: {
               ${o.image_url ? `<img src="${esc(o.image_url)}" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover">` : `<div style="width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-size:24px;background:var(--color-surface-2)">${cuisineEmoji(o.cuisine)}</div>`}
               <div style="flex:1;min-width:0"><b style="font-size:13px">${esc(o.title)}</b>
                 <div style="font-size:13px"><b style="color:var(--color-primary-ink)">${money(o.price_cents)}</b> <s style="color:var(--color-muted)">${money(o.original_price_cents)}</s> <b style="color:var(--color-accent-ink)">-${o.discount_pct}%</b></div>
-                <div style="font-size:11px;color:var(--color-muted)">${o.quantity_available} left · ⏳ ${timeLeft(o.pickup_end)}${o.distance_miles != null ? ` · ${o.distance_miles} mi` : ''}</div></div>
+                <div style="font-size:11px;color:var(--color-muted)">${o.quantity_available} left · ⏳ ${timeLeft(o.pickup_end)}${o.distance_km != null ? ` · ${o.distance_km} mi` : ''}</div></div>
               <button data-open="${o.id}" style="border:0;border-radius:999px;padding:6px 12px;font-weight:700;background:linear-gradient(135deg,#ff8a33,#ff6b00);color:#121316;cursor:pointer">View</button>
             </div>`).join('')}
         </div>`;

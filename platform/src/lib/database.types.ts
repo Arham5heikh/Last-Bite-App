@@ -742,8 +742,8 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
 "search_offers":
-{ Args: { "p_area_text"?: string,"p_dietary"?: string,"p_lat"?: number,"p_lng"?: number,"p_query"?: string,"p_radius_miles"?: number,"p_sort"?: string }; Returns: {
-              "address": string,"city": string,"cuisine": string,"description": string,"dietary": (string)[],"discount_pct": number,"distance_miles": number,"id": number,"image_url": string,"lat": number,"lng": number,"original_price_cents": number,"phone": string,"pickup_end": string,"pickup_start": string,"price_cents": number,"quantity_available": number,"quantity_total": number,"reason": Database["public"]['Enums']["offer_reason"],"restaurant_id": number,"restaurant_name": string,"tax_rate_bps": number,"title": string,"zip": string
+{ Args: { "p_area_text"?: string,"p_dietary"?: string,"p_lat"?: number,"p_lng"?: number,"p_query"?: string,"p_radius_km"?: number,"p_sort"?: string }; Returns: {
+              "address": string,"city": string,"cuisine": string,"description": string,"dietary": (string)[],"discount_pct": number,"distance_km": number,"id": number,"image_url": string,"lat": number,"lng": number,"original_price_cents": number,"phone": string,"pickup_end": string,"pickup_start": string,"price_cents": number,"quantity_available": number,"quantity_total": number,"reason": Database["public"]['Enums']["offer_reason"],"restaurant_id": number,"restaurant_name": string,"tax_rate_bps": number,"title": string,"zip": string
             }[]
                            },
 "set_order_payment":

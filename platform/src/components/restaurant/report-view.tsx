@@ -15,7 +15,7 @@ export function ReportView({ report: rep, today }: { report: Report; today: stri
   const s = rep.summary;
   const kpis: [string, string][] = [
     ['Food sales', money(s.foodSalesCents)], ['Orders picked up', String(s.ordersPickedUp)], ['Meals rescued', String(s.mealsRescued)],
-    ['Discounts given', money(s.discountsCents)], ['Sales tax', money(s.salesTaxCents)], ['Total charged', money(s.totalChargedCents)],
+    ['Discounts given', money(s.discountsCents)], ['HST', money(s.salesTaxCents)], ['Total charged', money(s.totalChargedCents)],
   ];
   return (
     <main className="container-page py-8">
@@ -43,7 +43,7 @@ export function ReportView({ report: rep, today }: { report: Report; today: stri
           <div className="text-right">
             <h1 className="m-0 text-2xl font-extrabold">Daily sales report</h1>
             <div className="text-sm text-[#6b7b73]">{rep.restaurant.name} · {rep.dateText}</div>
-            <div className="text-sm text-[#6b7b73]">{rep.restaurant.address}, {rep.restaurant.city}, WA {rep.restaurant.zip}{rep.restaurant.phone && ` · ${rep.restaurant.phone}`}</div>
+            <div className="text-sm text-[#6b7b73]">{rep.restaurant.address}, {rep.restaurant.city}, NL {rep.restaurant.zip}{rep.restaurant.phone && ` · ${rep.restaurant.phone}`}</div>
           </div>
         </div>
         <div className="mb-3 grid grid-cols-2 gap-2.5 md:grid-cols-6">

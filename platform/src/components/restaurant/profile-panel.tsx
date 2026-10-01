@@ -49,7 +49,7 @@ export function ProfilePanel({ ctx }: { ctx: Ctx }) {
         <Field label="Street address" htmlFor="p-address"><Input id="p-address" value={f.address} onChange={set('address')} /></Field>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="City" htmlFor="p-city"><Input id="p-city" value={f.city} onChange={set('city')} /></Field>
-          <Field label="ZIP" htmlFor="p-zip"><Input id="p-zip" value={f.zip} onChange={set('zip')} /></Field>
+          <Field label="Postal code" htmlFor="p-zip"><Input id="p-zip" value={f.zip} onChange={set('zip')} /></Field>
           <Field label="Phone" htmlFor="p-phone"><Input id="p-phone" value={f.phone} onChange={set('phone')} /></Field>
         </div>
         <SectionLabel>Map location</SectionLabel>
@@ -64,9 +64,9 @@ export function ProfilePanel({ ctx }: { ctx: Ctx }) {
             </Button>
           </Field>
         </div>
-        <SectionLabel>Sales tax</SectionLabel>
-        <Field label="Sales tax rate (%)" htmlFor="p-tax" className="max-w-60"
-          hint={<>Your combined WA state + local rate. <a href="https://dor.wa.gov/taxes-rates/sales-use-tax-rates/lookup-tax-rate" target="_blank" rel="noopener">Look up your rate</a>.</>}>
+        <SectionLabel>HST</SectionLabel>
+        <Field label="HST rate (%)" htmlFor="p-tax" className="max-w-60"
+          hint={<>Newfoundland and Labrador HST is 15%. <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate/calculator.html" target="_blank" rel="noopener">Check current rates</a>.</>}>
           <Input id="p-tax" inputMode="decimal" value={f.taxRatePct} onChange={set('taxRatePct')} />
         </Field>
         <ErrorText error={error} />

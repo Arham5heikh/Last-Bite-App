@@ -114,8 +114,8 @@ export function SignupForm({ initialRole }: { initialRole: Role }) {
             <Field label="Restaurant name" htmlFor="r-name"><Input id="r-name" name="r-name" /></Field>
             <Field label="Street address" htmlFor="r-address"><Input id="r-address" name="r-address" autoComplete="street-address" /></Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="City" htmlFor="r-city"><Input id="r-city" name="r-city" autoComplete="address-level2" placeholder="Seattle" /></Field>
-              <Field label="ZIP code" htmlFor="r-zip"><Input id="r-zip" name="r-zip" autoComplete="postal-code" inputMode="numeric" /></Field>
+              <Field label="City" htmlFor="r-city"><Input id="r-city" name="r-city" autoComplete="address-level2" placeholder="St. John's" /></Field>
+              <Field label="Postal code" htmlFor="r-zip"><Input id="r-zip" name="r-zip" autoComplete="postal-code" placeholder="A1C 5M2" maxLength={7} /></Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Phone" htmlFor="r-phone"><Input id="r-phone" name="r-phone" type="tel" autoComplete="tel" /></Field>

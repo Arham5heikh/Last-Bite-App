@@ -3,13 +3,13 @@
 // version changes. When you edit the text, change LEGAL_VERSION and EFFECTIVE here AND the versions
 // in the legal_documents table (add a migration); a test checks that they match.
 //
-// Company details come from LEGAL_ENTITY_NAME, SUPPORT_EMAIL and LEGAL_ADDRESS. Have a
-// Washington-licensed attorney review these documents before launch.
+// Company details come from LEGAL_ENTITY_NAME, SUPPORT_EMAIL and LEGAL_ADDRESS. Have a lawyer licensed in
+// Newfoundland and Labrador review these documents before launch.
 
 import type { Role } from '@/lib/constants';
 
-export const LEGAL_VERSION = '2026-09-29.1';
-export const EFFECTIVE = 'September 29, 2026';
+export const LEGAL_VERSION = '2026-10-01.1';
+export const EFFECTIVE = 'October 1, 2026';
 
 export type Company = { entity: string; email: string; address: string; serviceFeePct: number; graceMinutes: number };
 
@@ -37,8 +37,8 @@ You understand that surplus food:</p>
 </ul>
 
 <h2>2. Eligibility and your account</h2>
-<p>2.1 You must be at least 18 years old and able to form a binding contract to create an account. The Service is available only in
-the areas we serve in Washington State.</p>
+<p>2.1 You must be at least 19 years old (the age of majority in Newfoundland and Labrador) and able to form a binding contract to
+create an account. The Service is available only in the areas we serve in Newfoundland and Labrador.</p>
 <p>2.2 You agree to give accurate information (including a valid email address), to keep your password confidential, and to be
 responsible for all activity on your account. Tell us immediately at <a href="mailto:${c.email}">${c.email}</a> if you believe your account
 has been used without your permission. You may have only one customer account.</p>
@@ -53,13 +53,13 @@ and "wrong order" items may contain ingredients that differ from the regular men
 safe for you.</p>
 <p>3.3 Inspect food when you pick it up. If it appears unsafe, spoiled or not as described, do not accept or eat it, and report it to us
 as described in Section 6.</p>
-<p>3.4 Each Restaurant is responsible for complying with food safety laws, including the Washington State Retail Food Code and local
-health department rules.</p>
+<p>3.4 Each Restaurant is responsible for complying with food safety laws, including the <i>Food Premises Regulations</i> under the
+<i>Food and Drug Act</i> (Newfoundland and Labrador) and the federal <i>Safe Food for Canadians Act</i>, where applicable.</p>
 
 <h2>4. Ordering, pricing and payment</h2>
 <p>4.1 <b>Prices.</b> Before you place an order, we show you the item's original price, the Restaurant's discount, the discounted
-price, a Last Bite service fee (currently ${c.serviceFeePct}% of the food subtotal), applicable Washington sales tax, and the total.
-Prices are in U.S. dollars.</p>
+price, a Last Bite service fee (currently ${c.serviceFeePct}% of the food subtotal), applicable Harmonized Sales Tax (HST), and the
+total. Prices are in Canadian dollars.</p>
 <p>4.2 <b>Payment authorization.</b> When you place an order, we (through our payment processor) place a temporary authorization hold
 on your debit or credit card for the order total. <b>Your card is charged only when the Restaurant confirms pickup by entering your
 PIN.</b> If an order is cancelled or not picked up, the hold is released and you are not charged. Your card issuer controls how long
@@ -69,8 +69,8 @@ it for future orders you place. Card numbers are handled by our payment processo
 digits and expiry date. You can remove a saved card at any time on your Account page.</p>
 <p>4.4 <b>Order confirmation.</b> An order is confirmed when you receive a 4-digit pickup PIN. The Restaurant may decline or cancel an
 order it cannot fulfil (for example, if food is found to be unsuitable), in which case you will not be charged.</p>
-<p>4.5 <b>Taxes.</b> Where Last Bite is required to do so as a marketplace facilitator under Washington law, Last Bite collects sales
-tax on your order and remits it to the Washington State Department of Revenue.</p>
+<p>4.5 <b>Taxes.</b> HST is charged on your order (including the service fee) as required by the <i>Excise Tax Act</i> (Canada). Where
+Last Bite is required to collect and remit HST on sales made through the Service, it remits that tax to the Canada Revenue Agency.</p>
 
 <h2>5. Pickup, PIN and the discard timer</h2>
 <p>5.1 Each Offer has a discard timer set by the Restaurant. You must pick up your order at the Restaurant before the timer ends. If
@@ -95,8 +95,8 @@ method, and will tell you which one it used:</p>
 <p>Where applicable law requires a refund to your original form of payment, we will refund it that way.</p>
 <p>6.2 Because surplus food is sold at a discount in the condition described, we cannot offer refunds for matters of taste or
 preference, or for food that matched its description.</p>
-<p>6.3 Nothing in these Terms limits any right you have under the Washington Consumer Protection Act (RCW 19.86) or other laws that
-cannot be waived.</p>
+<p>6.3 Nothing in these Terms limits any right you have under the <i>Consumer Protection and Business Practices Act</i> (Newfoundland
+and Labrador) or other laws that cannot be waived.</p>
 <p>6.4 <b>Last Bite Platform Credit.</b> Platform Credit is a promotional and refund balance issued by Last Bite, at its discretion,
 to your account.</p>
 <ul>
@@ -155,17 +155,18 @@ required by law, or to protect users, Restaurants or the Service. Sections that 
 you to review and accept it before you continue using the Service. If you do not accept the updated Terms, you may close your account.</p>
 
 <h2>14. Governing law and disputes</h2>
-<p>14.1 These Terms are governed by the laws of the State of Washington, without regard to its conflict-of-law rules.</p>
+<p>14.1 These Terms are governed by the laws of the Province of Newfoundland and Labrador and the federal laws of Canada that apply
+there, without regard to conflict-of-law rules.</p>
 <p>14.2 Before filing a claim, you agree to contact us at <a href="mailto:${c.email}">${c.email}</a> and try to resolve the dispute
-informally for at least 30 days. Either party may bring an individual claim in small claims court if it qualifies. Otherwise, any
-dispute will be resolved exclusively in the state or federal courts located in King County, Washington, and you and Last Bite consent
-to their jurisdiction.</p>
+informally for at least 30 days. Either party may bring an individual claim in Small Claims Court if it qualifies. Otherwise, any
+dispute will be resolved in the courts of Newfoundland and Labrador sitting in St. John's, and you and Last Bite consent to their
+jurisdiction, except where consumer protection law gives you the right to bring a claim elsewhere.</p>
 
 <h2>15. General</h2>
 <p>These Terms and the Privacy Policy are the entire agreement between you and Last Bite about the Service. If any provision is found
 unenforceable, the rest remains in effect. Our failure to enforce a provision is not a waiver. You may not assign these Terms; we may
 assign them in connection with a merger, acquisition or sale of assets. You agree that accepting these Terms electronically has the
-same effect as a handwritten signature under the Washington Uniform Electronic Transactions Act (RCW 1.80) and the federal E-SIGN Act.</p>
+same effect as a handwritten signature under the <i>Electronic Commerce Act</i> (Newfoundland and Labrador).</p>
 
 <h2>16. Contact</h2>
 <p>${c.entity} · ${c.address} · <a href="mailto:${c.email}">${c.email}</a></p>`;
@@ -189,11 +190,12 @@ or end an Offer at any time. Orders already placed must still be honoured unless
 <h2>2. Eligibility, licences and insurance</h2>
 <p>You represent and warrant, and will ensure throughout the term, that you:</p>
 <ul>
-  <li>are a legally operating business in Washington State, holding a current Washington business licence, UBI number and all
-  food establishment permits required by the Washington State Department of Health and your local health jurisdiction
-  (such as Public Health – Seattle &amp; King County or the Tacoma-Pierce County Health Department);</li>
-  <li>comply with the Washington State Retail Food Code (WAC 246-215) and all other applicable food safety, labelling, health,
-  employment and consumer protection laws;</li>
+  <li>are a legally operating business in Newfoundland and Labrador, holding all required business registrations and licences
+  (including any municipal business licence, such as from the City of St. John's), a GST/HST registration number where required,
+  and a valid food premises licence issued by Service NL;</li>
+  <li>comply with the <i>Food Premises Regulations</i> under the <i>Food and Drug Act</i> (Newfoundland and Labrador), the federal
+  <i>Safe Food for Canadians Act</i> where applicable, and all other applicable food safety, labelling, health, employment and
+  consumer protection laws;</li>
   <li>maintain commercial general liability insurance, including products-completed operations coverage, of at least
   $1,000,000 per occurrence, and provide proof to Last Bite on request; and</li>
   <li>will notify Last Bite within 2 business days if any permit is suspended or revoked, or if you receive a health department
@@ -248,9 +250,10 @@ includes the Stripe Services Agreement.</p>
   each deposit.</li>
   <li><b>Questions:</b> raise any question about a payout within 60 days.</li>
 </ul>
-<p>5.4 <b>Taxes.</b> Where Last Bite is a marketplace facilitator under Washington law, Last Bite will collect and remit retail sales tax
-on sales made through the marketplace. You remain responsible for all other taxes on your business, including business and
-occupation (B&amp;O) tax on your gross proceeds and any income taxes.</p>
+<p>5.4 <b>Taxes.</b> HST is charged to customers on sales made through the marketplace at the rate shown in your profile. Where
+Last Bite is required under the <i>Excise Tax Act</i> (Canada) to collect and remit HST on those sales, it will do so; otherwise you are
+responsible for reporting and remitting HST on your sales. You remain responsible for all other taxes on your business, including
+income taxes.</p>
 <p>5.5 <b>Refunds, Platform Credit and chargebacks.</b> Last Bite will share a customer's complaint with you and consider your response
 before deciding on a refund. Last Bite may resolve a complaint in one of two ways:</p>
 <ul>
@@ -303,11 +306,12 @@ ask you to accept the new version. If you do not accept, you may terminate under
 
 <h2>13. General</h2>
 <p>You and Last Bite are independent contractors; nothing in this Agreement creates a partnership, joint venture, franchise or
-employment relationship. This Agreement is governed by the laws of the State of Washington, and the parties consent to the exclusive
-jurisdiction of the state and federal courts in King County, Washington. You may not assign this Agreement without our consent. If any
+employment relationship. This Agreement is governed by the laws of the Province of Newfoundland and Labrador and the federal laws of
+Canada that apply there, and the parties consent to the exclusive jurisdiction of the courts of Newfoundland and Labrador sitting in
+St. John's. You may not assign this Agreement without our consent. If any
 provision is unenforceable, the rest remains in effect. This Agreement, together with the Privacy Policy, is the entire agreement
-between the parties about its subject. Electronic acceptance has the same effect as a signature under the Washington Uniform
-Electronic Transactions Act (RCW 1.80) and the federal E-SIGN Act.</p>
+between the parties about its subject. Electronic acceptance has the same effect as a signature under the <i>Electronic Commerce
+Act</i> (Newfoundland and Labrador).</p>
 
 <h2>14. Contact</h2>
 <p>${c.entity} · ${c.address} · <a href="mailto:${c.email}">${c.email}</a></p>`;
@@ -321,7 +325,7 @@ when you use the Last Bite website and services as a customer or restaurant part
 <h2>1. Information we collect</h2>
 <ul>
   <li><b>Account information:</b> email address, user name and a securely hashed password (stored by our authentication provider,
-  Supabase). For restaurant partners, business name, address, phone number, cuisine, map location, sales-tax rate, menus and photos.</li>
+  Supabase). For restaurant partners, business name, address, phone number, cuisine, map location, HST rate, menus and photos.</li>
   <li><b>Orders:</b> items, quantities, prices, fees, taxes, pickup PIN, order status and timestamps.</li>
   <li><b>Payment information:</b> card numbers are collected and processed by our payment processor (Stripe) and never stored on
   Last Bite servers. We store a processor reference and the card brand, last four digits and expiry date so you can recognise saved
@@ -331,7 +335,7 @@ when you use the Last Bite website and services as a customer or restaurant part
   the bank account (bank name and last four digits) for payout records.</li>
   <li><b>Platform Credit:</b> a ledger of credit issued to you, used on orders and returned, with dates and reasons.</li>
   <li><b>Location:</b> if you choose "Use my location," your browser shares your approximate location with us to show nearby deals.
-  We use it for that search and do not store it on our servers. You can also search by city or ZIP code instead.</li>
+  We use it for that search and do not store it on our servers. You can also search by town or postal code instead.</li>
   <li><b>Legal acceptances:</b> which versions of our terms you accepted, when, and the IP address and browser used, as a record
   of your agreement.</li>
   <li><b>Technical information:</b> IP address, browser type and server logs needed to operate and secure the service.</li>
@@ -350,8 +354,10 @@ it for targeted advertising.</p>
   <li><b>With service providers:</b> our payment processor (Stripe), our database, authentication and file storage provider
   (Supabase), and our hosting, email and map providers, only as needed to provide the service and under confidentiality obligations. Maps load tiles from a map provider (by default, OpenStreetMap), which receives your IP
   address when your browser requests map images.</li>
-  <li><b>For legal reasons:</b> to comply with law, legal process or requests from government authorities (including the Washington
-  State Department of Revenue for tax purposes), or to protect the rights, safety and property of users, restaurants or Last Bite.</li>
+  <li><b>Outside Canada:</b> some of these providers store or process information outside Canada, including in the United States,
+  where it may be accessible to courts and authorities under the laws of those countries.</li>
+  <li><b>For legal reasons:</b> to comply with law, legal process or requests from government authorities (including the Canada
+  Revenue Agency for tax purposes), or to protect the rights, safety and property of users, restaurants or Last Bite.</li>
   <li><b>Business transfers:</b> in connection with a merger, acquisition or sale of assets, subject to this Policy.</li>
 </ul>
 
@@ -372,11 +378,12 @@ rate limiting and a payment processor certified to PCI DSS. No system is complet
 <h2>7. Your choices and rights</h2>
 <p>You can review and update your information, remove saved cards, and close your account. You may ask us to access, correct, export or
 delete your personal information by emailing <a href="mailto:${c.email}">${c.email}</a>. We will respond within 30 days and may need to
-verify your identity. We may keep information we are legally required to retain. We will not discriminate against you for exercising
-these rights.</p>
+verify your identity. We may keep information we are legally required to retain. We handle personal information in accordance with
+the <i>Personal Information Protection and Electronic Documents Act</i> (PIPEDA). If you are not satisfied with our response, you may
+contact the Office of the Privacy Commissioner of Canada.</p>
 
 <h2>8. Children</h2>
-<p>The service is not directed to children. You must be at least 18 to create a customer account. We do not knowingly collect personal
+<p>The service is not directed to children. You must be at least 19 to create a customer account. We do not knowingly collect personal
 information from children under 13; if you believe we have, contact us and we will delete it.</p>
 
 <h2>9. Changes</h2>

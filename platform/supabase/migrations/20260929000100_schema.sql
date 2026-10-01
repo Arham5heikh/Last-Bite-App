@@ -35,9 +35,9 @@ create table public.settings (
 );
 insert into public.settings (key, value) values
   ('service_fee_bps', '500'),
-  ('default_tax_rate_bps', '1035'),
+  ('default_tax_rate_bps', '1500'),  -- Newfoundland and Labrador HST
   ('require_restaurant_approval', 'true'),
-  ('tax_service_fee', 'false');
+  ('tax_service_fee', 'true');  -- HST also applies to Last Bite's service fee
 
 -- Current version of each legal document. Must match src/lib/legal/documents.ts
 -- (a test checks this). Bump both when the text changes; users then re-accept.
@@ -48,9 +48,9 @@ create table public.legal_documents (
   roles public.user_role[] not null
 );
 insert into public.legal_documents (id, title, version, roles) values
-  ('customer-terms', 'Customer Terms of Service', '2026-09-29.1', '{customer}'),
-  ('restaurant-agreement', 'Restaurant Partner Agreement', '2026-09-29.1', '{restaurant}'),
-  ('privacy', 'Privacy Policy', '2026-09-29.1', '{customer,restaurant}');
+  ('customer-terms', 'Customer Terms of Service', '2026-10-01.1', '{customer}'),
+  ('restaurant-agreement', 'Restaurant Partner Agreement', '2026-10-01.1', '{restaurant}'),
+  ('privacy', 'Privacy Policy', '2026-10-01.1', '{customer,restaurant}');
 
 create table public.terms_acceptances (
   id bigint generated always as identity primary key,
@@ -65,9 +65,9 @@ create index terms_acceptances_user_idx on public.terms_acceptances (user_id, do
 
 -- ---------------------------------------------------------------- service area
 
--- Puget Sound ZIP codes with center points (USPS ZIP list; coordinates from GeoNames, CC BY 4.0).
+-- Postal areas served (forward sortation areas, e.g. A1C) with approximate center points.
 create table public.zips (
-  zip text primary key check (zip ~ '^\d{5}$'),
+  zip text primary key check (zip ~ '^[A-Z]\d[A-Z]$'),
   city text not null,
   cities text[] not null,
   county text not null,
@@ -85,7 +85,7 @@ create table public.restaurants (
   cuisine text not null default '' check (char_length(cuisine) <= 40),
   address text not null check (char_length(address) between 3 and 120),
   city text not null check (char_length(city) between 2 and 60),
-  zip text not null check (zip ~ '^\d{5}(-\d{4})?$'),
+  zip text not null check (zip ~ '^[A-Z]\d[A-Z] \d[A-Z]\d$'),  -- Canadian postal code, "A1C 5M2"
   phone text not null default '' check (char_length(phone) <= 30),
   location extensions.geography(point, 4326),
   lat double precision generated always as (extensions.st_y(location::extensions.geometry)) stored,

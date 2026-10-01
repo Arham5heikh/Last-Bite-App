@@ -109,7 +109,7 @@ export function PickupPanel() {
             <tbody>
               <tr><td>Food ({order.quantity} × {money(order.unitPriceCents)})</td><td>{money(order.subtotalCents)}</td></tr>
               <tr><td>Service fee</td><td>{money(order.serviceFeeCents)}</td></tr>
-              <tr><td>Sales tax</td><td>{money(order.taxCents)}</td></tr>
+              <tr><td>HST</td><td>{money(order.taxCents)}</td></tr>
               <tr className="border-t border-line font-bold"><td className="pt-1">Customer pays</td><td className="pt-1">{money(order.totalCents)}</td></tr>
             </tbody>
           </table>

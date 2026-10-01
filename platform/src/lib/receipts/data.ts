@@ -22,7 +22,7 @@ const PAYMENT_STATUS: Record<Order['status'], string> = {
 export const receiptNumber = (order: { id: number; created_at: string }) => {
   const d = new Date(order.created_at);
   const ymd = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
-  return `RB-${ymd}-${String(order.id).padStart(6, '0')}`;
+  return `LB-${ymd}-${String(order.id).padStart(6, '0')}`;
 };
 
 export type Receipt = Awaited<ReturnType<typeof receiptData>>;
@@ -160,7 +160,7 @@ export function reportCsv(rep: Report) {
   const s = rep.summary;
   return toCsv([
     ['Order #', 'Ordered', 'Picked up', 'Customer', 'Item', 'Qty', 'Original unit price', 'Discount %', 'Unit price',
-      'Food subtotal', 'Sales tax', 'Service fee', 'Total', 'Card', 'Status'],
+      'Food subtotal', 'HST', 'Service fee', 'Total', 'Card', 'Status'],
     ...rep.orders.map((o) => [o.id, o.orderedTime, o.pickedUpTime, o.customer, o.item, o.quantity, dollars(o.originalUnitCents), o.discountPct,
       dollars(o.unitPriceCents), dollars(o.subtotalCents), dollars(o.taxCents), dollars(o.serviceFeeCents), dollars(o.totalCents), o.card, o.statusLabel]),
     [],
@@ -170,7 +170,7 @@ export function reportCsv(rep: Report) {
     ['Menu value', dollars(s.menuValueCents)],
     ['Discounts given', dollars(s.discountsCents)],
     ['Food sales', dollars(s.foodSalesCents)],
-    ['Sales tax collected', dollars(s.salesTaxCents)],
+    ['HST collected', dollars(s.salesTaxCents)],
     ['Last Bite service fees (paid by customers)', dollars(s.serviceFeesCents)],
     ['Total charged to customers', dollars(s.totalChargedCents)],
     ['Awaiting pickup', s.awaitingPickup],

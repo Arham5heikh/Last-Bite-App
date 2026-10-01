@@ -28,7 +28,10 @@ export const passwordSchema = z.string({ error: 'Password is required.' })
   .max(200, 'Password is too long.')
   .refine((v) => /[A-Za-z]/.test(v) && /\d/.test(v), 'Password must include at least one letter and one number.');
 
-export const zipSchema = z.string({ error: 'ZIP code is required.' }).trim().regex(/^\d{5}(-\d{4})?$/, 'Please enter a valid ZIP code.');
+// Canadian postal code, stored in the standard "A1C 5M2" form.
+export const zipSchema = z.string({ error: 'Postal code is required.' }).trim()
+  .regex(/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i, 'Please enter a valid postal code, e.g. A1C 5M2.')
+  .transform((v) => { const c = v.replace(/[ -]/g, '').toUpperCase(); return `${c.slice(0, 3)} ${c.slice(3)}`; });
 
 const coord = (limit: number) =>
   z.union([z.number(), z.string()]).optional().nullable()
@@ -57,8 +60,8 @@ export const signupSchema = z.object({
 
 export const restaurantProfileSchema = restaurantFieldsSchema.extend({
   description: optionalText('Description', 400),
-  taxRatePct: z.coerce.number({ error: 'Sales tax rate must be between 0% and 20%.' })
-    .min(0, 'Sales tax rate must be between 0% and 20%.').max(20, 'Sales tax rate must be between 0% and 20%.'),
+  taxRatePct: z.coerce.number({ error: 'HST rate must be between 0% and 20%.' })
+    .min(0, 'HST rate must be between 0% and 20%.').max(20, 'HST rate must be between 0% and 20%.'),
 });
 
 export const dollars = (field: string, min: number, max: number) =>

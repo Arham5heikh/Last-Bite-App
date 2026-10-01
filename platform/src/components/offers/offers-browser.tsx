@@ -64,7 +64,7 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
     setView(readSession<'list' | 'map'>('rb-view', 'list'));
   }, []);
 
-  // City and ZIP suggestions for the area box.
+  // Town and postal-area suggestions for the area box.
   const areas = useQuery({
     queryKey: ['areas'],
     staleTime: Infinity,
@@ -76,16 +76,16 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
     queryKey: ['offers', f, origin],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      // A known city or ZIP ("Tacoma", "98198") searches around that place; otherwise the user's own location.
+      // A known place or postal area ("Mount Pearl", "A1C") searches around it; otherwise the user's own location.
       let place: { label: string; lat: number; lng: number } | null = null;
       if (f.area.trim()) {
         const { data } = await supabase.rpc('resolve_area', { p_query: f.area });
         place = data?.[0] ?? null;
       }
       const center = place ?? origin;
-      const radius = f.radius ? Number(f.radius) : place ? 10 : undefined;
+      const radius = f.radius ? Number(f.radius) : place ? 15 : undefined;
       const { data, error } = await supabase.rpc('search_offers', {
-        p_lat: center?.lat, p_lng: center?.lng, p_radius_miles: radius, p_query: f.q.trim() || undefined,
+        p_lat: center?.lat, p_lng: center?.lng, p_radius_km: radius, p_query: f.q.trim() || undefined,
         p_area_text: f.area.trim() && !place ? f.area.trim() : undefined, p_dietary: f.dietary || undefined, p_sort: f.sort || undefined,
       });
       if (error) throw new Error(error.message);
@@ -127,7 +127,7 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
       },
       () => {
         setLocating(false);
-        setGeoError('We could not get your location. You can search by city or ZIP instead.');
+        setGeoError('We could not get your location. You can search by town or postal code instead.');
       },
       { timeout: 10000, maximumAge: 600000 },
     );
@@ -159,7 +159,7 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
 
       <form className="mb-3 grid gap-3 rounded-card border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_1.2fr_repeat(3,minmax(10.5rem,1fr))_auto]" onSubmit={(e) => e.preventDefault()}>
         <Input placeholder="Search dishes, restaurants, cuisines…" aria-label="Search" value={filters.q} onChange={set('q')} />
-        <Input placeholder="City or ZIP (e.g. Tacoma, 98198)" aria-label="City or ZIP" list="area-list" value={filters.area} onChange={set('area')} />
+        <Input placeholder="Town or postal code (e.g. Mount Pearl, A1C)" aria-label="Town or postal code" list="area-list" value={filters.area} onChange={set('area')} />
         <datalist id="area-list">
           {cities.map(([c, county]) => <option key={c} value={c}>{county} County</option>)}
           {(areas.data ?? []).map((z) => <option key={z.zip} value={z.zip}>{z.city}</option>)}
@@ -170,7 +170,7 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
         </Select>
         <Select aria-label="Distance" value={filters.radius} onChange={set('radius')}>
           <option value="">Any distance</option>
-          {[2, 5, 10, 25, 50].map((m) => <option key={m} value={m}>Within {m} mi</option>)}
+          {[2, 5, 10, 25, 50].map((m) => <option key={m} value={m}>Within {m} km</option>)}
         </Select>
         <Select aria-label="Sort" value={filters.sort} onChange={set('sort')}>
           <option value="">Best match</option>
@@ -185,7 +185,7 @@ export function OffersBrowser({ map, payment }: { map: MapConfig; payment: Payme
       </form>
       {offers.data?.place && (
         <p className="mb-3 text-sm text-muted">
-          Showing deals within {offers.data.radius} miles of {offers.data.place.label}. Change the distance filter to widen the search.
+          Showing deals within {offers.data.radius} km of {offers.data.place.label}. Change the distance filter to widen the search.
         </p>
       )}
       {geoError && <Alert tone="warn" className="mb-3">{geoError}</Alert>}

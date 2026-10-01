@@ -22,11 +22,11 @@ export const serverEnv = {
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? '',
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
   cronSecret: process.env.CRON_SECRET ?? '',
-  timeZone: process.env.TIME_ZONE || 'America/Los_Angeles',
+  timeZone: process.env.TIME_ZONE || 'America/St_Johns',
   legal: {
     entity: process.env.LEGAL_ENTITY_NAME || 'Last Bite',
     email: process.env.SUPPORT_EMAIL || 'support@lastbite.ca',
-    address: process.env.LEGAL_ADDRESS || 'Seattle, Washington',
+    address: process.env.LEGAL_ADDRESS || "St. John's, Newfoundland and Labrador",
   },
   // Orders not picked up are released (never charged) this long after the discard timer ends.
   pickupGraceMinutes: int(process.env.PICKUP_GRACE_MINUTES, 10),

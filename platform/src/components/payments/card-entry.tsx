@@ -82,7 +82,7 @@ function MockCardEntry({ ref }: { ref: React.Ref<CardEntryHandle> }) {
         <Field label="CVC" htmlFor="cc-cvc">
           <Input id="cc-cvc" inputMode="numeric" autoComplete="cc-csc" placeholder="123" maxLength={4} value={cvc} onChange={(e) => setCvc(e.target.value)} />
         </Field>
-        <Field label="ZIP" htmlFor="cc-zip"><Input id="cc-zip" inputMode="numeric" autoComplete="postal-code" placeholder="98101" maxLength={10} /></Field>
+        <Field label="Postal code" htmlFor="cc-zip"><Input id="cc-zip" autoComplete="postal-code" placeholder="A1C 5M2" maxLength={7} /></Field>
       </div>
       <div className="rounded-xl border border-dashed border-line px-3 py-2 text-xs text-muted">
         🧪 <b>Test mode</b>: no real charges. Use <code>4242 4242 4242 4242</code>, any future date and any CVC.{' '}

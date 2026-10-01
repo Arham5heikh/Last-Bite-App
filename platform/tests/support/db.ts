@@ -43,7 +43,7 @@ export async function signUp(role: 'customer' | 'restaurant', extra: Record<stri
     options: {
       data: {
         username, role, accepted_terms: accepted(role),
-        restaurant: role === 'restaurant' ? { name: `Test Kitchen ${username}`, address: '1 Test St', city: 'Seattle', zip: '98101' } : undefined,
+        restaurant: role === 'restaurant' ? { name: `Test Kitchen ${username}`, address: '1 Test St', city: "St. John's", zip: 'A1C 5M2' } : undefined,
         ...extra,
       },
     },

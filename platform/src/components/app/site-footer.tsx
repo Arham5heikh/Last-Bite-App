@@ -12,7 +12,7 @@ export function SiteFooter() {
           <Link href="/legal/restaurant-agreement" className="text-muted hover:text-ink">Restaurant Partner Agreement</Link>
           <Link href="/legal/privacy" className="text-muted hover:text-ink">Privacy Policy</Link>
         </nav>
-        <span>© Last Bite · Greater Seattle, WA</span>
+        <span>© Last Bite · St. John&apos;s, Newfoundland and Labrador</span>
       </div>
     </footer>
   );

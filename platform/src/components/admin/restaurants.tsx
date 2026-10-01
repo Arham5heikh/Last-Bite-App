@@ -30,7 +30,7 @@ export function RestaurantsPanel() {
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-3">
-        <Input className="max-w-sm" placeholder="Search name, city, ZIP or owner email" value={q} onChange={(e) => setQ(e.target.value)} />
+        <Input className="max-w-sm" placeholder="Search name, town, postal code or owner email" value={q} onChange={(e) => setQ(e.target.value)} />
         <Select className="max-w-52" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">All statuses</option><option value="pending">Pending approval</option><option value="approved">Approved</option><option value="suspended">Suspended</option>
         </Select>

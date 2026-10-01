@@ -160,7 +160,7 @@ export async function updateSettings(input: unknown) {
     const d = parse(
       z.object({
         serviceFeePct: z.coerce.number().min(0, 'Service fee must be 0% to 30%.').max(30, 'Service fee must be 0% to 30%.'),
-        defaultTaxRatePct: z.coerce.number().min(0, 'Sales tax must be 0% to 20%.').max(20, 'Sales tax must be 0% to 20%.'),
+        defaultTaxRatePct: z.coerce.number().min(0, 'HST must be 0% to 20%.').max(20, 'HST must be 0% to 20%.'),
         requireRestaurantApproval: z.boolean(),
       }),
       input,

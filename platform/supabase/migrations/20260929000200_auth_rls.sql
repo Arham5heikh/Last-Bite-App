@@ -28,10 +28,10 @@ language sql stable security definer set search_path = public as $$
   select coalesce((value #>> '{}')::boolean, false) from public.settings where key = p_key;
 $$;
 
--- Center point of a ZIP code (null if it's outside the service area).
+-- Center point of a postal code's area (null if it's outside the service area).
 create function public.zip_location(p_zip text) returns extensions.geography
 language sql stable set search_path = public, extensions as $$
-  select location from public.zips where zip = left(p_zip, 5);
+  select location from public.zips where zip = upper(left(replace(btrim(p_zip), ' ', ''), 3));
 $$;
 
 -- ---------------------------------------------------------------- sign-up

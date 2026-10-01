@@ -4,7 +4,7 @@ import { useQuery, type QueryKey } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
-const tz = 'America/Los_Angeles';
+const tz = 'America/St_Johns';
 export const todayPT = () => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
 export const daysAgo = (n: number) => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(Date.now() - n * 86400000));
 export type Range = { from: string; to: string };

@@ -28,9 +28,9 @@ export function PosReceipt({ r }: { r: Receipt }) {
         <header className="pos-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="pos-logo" src="/assets/logo.svg" alt="Last Bite" />
-          <div className="pos-tag">Rescued food · Greater Seattle</div>
+          <div className="pos-tag">Rescued food · St. John&apos;s, NL</div>
           <div className="pos-store">{rest.name}</div>
-          <div>{rest.address}<br />{rest.city}, WA {rest.zip}{rest.phone && <><br />Tel {rest.phone}</>}</div>
+          <div>{rest.address}<br />{rest.city}, NL {rest.zip}{rest.phone && <><br />Tel {rest.phone}</>}</div>
         </header>
         <hr className="pos-dash" />
         <Row left="Receipt" right={r.receiptNumber} />
@@ -48,7 +48,7 @@ export function PosReceipt({ r }: { r: Receipt }) {
         <Row left={`Discount ${it.discountPct}%`} right={`-${money(it.savingsCents)}`} />
         <Row left="Subtotal" right={money(r.subtotalCents)} />
         <Row left={`Service fee ${r.serviceFeePct}%`} right={money(r.serviceFeeCents)} />
-        <Row left={`WA sales tax ${pct(r.taxRateBps)}`} right={money(r.taxCents)} />
+        <Row left={`HST ${pct(r.taxRateBps)}`} right={money(r.taxCents)} />
         <hr className="pos-double" />
         <Row left="Total" right={money(r.totalCents)} className="total" />
         {r.creditAppliedCents > 0 && (

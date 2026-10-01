@@ -7,7 +7,7 @@ describe('pricing', () => {
     expect(discountedUnitPrice(1000, 33)).toBe(670);
   });
 
-  it('builds the full total: food + 5% service fee + WA sales tax', () => {
+  it('builds the full total: food + 5% service fee + sales tax', () => {
     const q = quote({ originalUnitCents: 1695, discountPct: 50, quantity: 2, serviceFeeBps: 500, taxRateBps: 1035 });
     expect(q).toMatchObject({ unitPriceCents: 848, subtotalCents: 1696, savingsCents: 1694, serviceFeeCents: 85, taxCents: 176, totalCents: 1957 });
   });

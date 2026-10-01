@@ -58,7 +58,7 @@ export function createStripeProvider(secretKey: string, api?: { host: string; po
         const intent = await stripe.paymentIntents.create(
           {
             amount: amountCents,
-            currency: 'usd',
+            currency: 'cad',
             capture_method: 'manual',
             payment_method_types: ['card'],
             customer: attached && customerId ? customerId : undefined,
@@ -168,7 +168,7 @@ export function createStripeProvider(secretKey: string, api?: { host: string; po
       const transfer = await stripe.transfers.create(
         {
           amount: amountCents,
-          currency: 'usd',
+          currency: 'cad',
           destination: accountId,
           source_transaction: sourceChargeId ?? undefined,
           description,

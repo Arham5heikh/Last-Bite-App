@@ -91,9 +91,9 @@ function drawPosReceipt(doc: Doc, rc: Receipt) {
   const logoW = 140;
   doc.image(LOGO, L + (W - logoW) / 2, y, { width: logoW });
   y += logoW * LOGO_RATIO + 4;
-  center('RESCUED FOOD · GREATER SEATTLE', 'mono', 6.2, { spacing: 0.4, after: 7 });
+  center("RESCUED FOOD · ST. JOHN'S, NL", 'mono', 6.2, { spacing: 0.4, after: 7 });
   center(rc.restaurant.name.toUpperCase(), 'monoBold', 9.5, { after: 1 });
-  center(`${rc.restaurant.address}\n${rc.restaurant.city}, WA ${rc.restaurant.zip}${rc.restaurant.phone ? `\nTel ${rc.restaurant.phone}` : ''}`, 'mono', 7.2, { after: 2 });
+  center(`${rc.restaurant.address}\n${rc.restaurant.city}, NL ${rc.restaurant.zip}${rc.restaurant.phone ? `\nTel ${rc.restaurant.phone}` : ''}`, 'mono', 7.2, { after: 2 });
   dashes();
 
   // Order facts.
@@ -117,7 +117,7 @@ function drawPosReceipt(doc: Doc, rc: Receipt) {
   row(`DISCOUNT ${it.discountPct}%`, money(-it.savingsCents));
   row('SUBTOTAL', money(rc.subtotalCents));
   row(`SERVICE FEE ${rc.serviceFeePct}%`, money(rc.serviceFeeCents));
-  row(`WA SALES TAX ${pct(rc.taxRateBps)}`, money(rc.taxCents));
+  row(`HST ${pct(rc.taxRateBps)}`, money(rc.taxCents));
   double();
   row('TOTAL', money(rc.totalCents), { bold: true, size: 11.5, after: 3 });
   if (rc.creditAppliedCents) {
@@ -212,13 +212,13 @@ export function reportPdf(rep: Report) {
   doc.image(LOGO, L, 34, { height: 38 });
   doc.font('head').fontSize(18).fillColor(INK).text('Daily sales report', L, 36, { width: W, align: 'right' });
   doc.font('regular').fontSize(9.5).fillColor(MUTED).text(`${rep.restaurant.name} · ${rep.dateText}`, L, 60, { width: W, align: 'right' });
-  doc.text(`${rep.restaurant.address}, ${rep.restaurant.city}, WA ${rep.restaurant.zip}${rep.restaurant.phone ? ` · ${rep.restaurant.phone}` : ''}`, L, 74, { width: W, align: 'right' });
+  doc.text(`${rep.restaurant.address}, ${rep.restaurant.city}, NL ${rep.restaurant.zip}${rep.restaurant.phone ? ` · ${rep.restaurant.phone}` : ''}`, L, 74, { width: W, align: 'right' });
   rule(doc, L, R, 96);
 
   const s = rep.summary;
   const cards: [string, string][] = [
     ['Food sales', money(s.foodSalesCents)], ['Orders picked up', String(s.ordersPickedUp)], ['Meals rescued', String(s.mealsRescued)],
-    ['Discounts given', money(s.discountsCents)], ['Sales tax', money(s.salesTaxCents)], ['Total charged', money(s.totalChargedCents)],
+    ['Discounts given', money(s.discountsCents)], ['HST', money(s.salesTaxCents)], ['Total charged', money(s.totalChargedCents)],
   ];
   const cw = (W - 5 * 8) / 6;
   cards.forEach(([k, v], i) => {

@@ -609,43 +609,44 @@ $$;
 
 -- ---------------------------------------------------------------- search
 
--- Resolves "98198", "Des Moines" or "Des Moines, WA" to a center point.
+-- Resolves "A1C", "A1C 5M2", "Mount Pearl" or "Mount Pearl, NL" to a center point.
 create function public.resolve_area(p_query text)
 returns table (label text, lat double precision, lng double precision, kind text)
 language plpgsql stable set search_path = public, extensions as $$
 declare
-  q text := lower(btrim(regexp_replace(btrim(coalesce(p_query, '')), ',?\s*(wa|washington)$', '', 'i')));
+  q text := lower(btrim(regexp_replace(btrim(coalesce(p_query, '')), ',?\s*(nl|newfoundland( and labrador)?)$', '', 'i')));
 begin
   if q = '' then
     return;
   end if;
-  if q ~ '^\d{5}$' then
+  -- A postal code or its first three characters (forward sortation area).
+  if q ~ '^[a-z]\d[a-z]([ -]?\d[a-z]\d)?$' then
     return query
       select z.zip || ' (' || array_to_string(z.cities[1:2], ' / ') || ')', st_y(z.location::geometry), st_x(z.location::geometry), 'zip'
-      from public.zips z where z.zip = q;
+      from public.zips z where z.zip = upper(left(q, 3));
     return;
   end if;
-  -- Primary city names first, then alternate names (e.g. "Federal Way" vs. a neighborhood name).
+  -- Primary town names first, then alternate names (e.g. "Kelligrews" within Conception Bay South).
   return query
-    select min(z.city) || ', WA', st_y(st_centroid(st_collect(z.location::geometry))), st_x(st_centroid(st_collect(z.location::geometry))), 'city'
+    select min(z.city) || ', NL', st_y(st_centroid(st_collect(z.location::geometry))), st_x(st_centroid(st_collect(z.location::geometry))), 'city'
     from public.zips z where lower(z.city) = q
     having count(*) > 0;
   if found then
     return;
   end if;
   return query
-    select initcap(q) || ', WA', st_y(st_centroid(st_collect(z.location::geometry))), st_x(st_centroid(st_collect(z.location::geometry))), 'city'
-    from public.zips z where exists (select 1 from unnest(z.cities) c where lower(c) = q)
+    select min(c.name) || ', NL', st_y(st_centroid(st_collect(z.location::geometry))), st_x(st_centroid(st_collect(z.location::geometry))), 'city'
+    from public.zips z cross join lateral unnest(z.cities) as c(name) where lower(c.name) = q
     having count(*) > 0;
 end;
 $$;
 
 -- Live offers for customers, nearest first when a location is known. Runs with the caller's
--- permissions, so RLS decides what is visible. Distances use PostGIS geography (miles).
+-- permissions, so RLS decides what is visible. Distances use PostGIS geography (kilometres).
 create function public.search_offers(
   p_lat double precision default null,
   p_lng double precision default null,
-  p_radius_miles double precision default null,
+  p_radius_km double precision default null,
   p_query text default null,
   p_area_text text default null,
   p_dietary text default null,
@@ -655,7 +656,7 @@ create function public.search_offers(
   original_price_cents integer, price_cents integer, discount_pct integer, quantity_available integer, quantity_total integer,
   pickup_start timestamptz, pickup_end timestamptz, restaurant_id bigint, restaurant_name text, cuisine text,
   address text, city text, zip text, phone text, lat double precision, lng double precision, tax_rate_bps integer,
-  distance_miles double precision
+  distance_km double precision
 )
 language sql stable security invoker set search_path = public, extensions as $$
   with origin as (
@@ -666,16 +667,16 @@ language sql stable security invoker set search_path = public, extensions as $$
     o.original_price_cents, o.price_cents, o.discount_pct, o.quantity_available, o.quantity_total,
     o.pickup_start, o.pickup_end, r.id, r.name, r.cuisine, r.address, r.city, r.zip, r.phone, r.lat, r.lng, r.tax_rate_bps,
     case when origin.g is not null and r.location is not null
-      then round((st_distance(r.location, origin.g) / 1609.344)::numeric, 1)::double precision end
+      then round((st_distance(r.location, origin.g) / 1000.0)::numeric, 1)::double precision end
   from public.offers o
   join public.restaurants r on r.id = o.restaurant_id
   cross join origin
   where o.status = 'active' and o.quantity_available > 0 and o.pickup_end > now() and r.status = 'approved'
     and (coalesce(p_query, '') = '' or (o.title || ' ' || o.description || ' ' || r.name || ' ' || r.cuisine) ilike '%' || p_query || '%')
-    and (coalesce(p_area_text, '') = '' or r.city ilike '%' || p_area_text || '%' or r.zip like p_area_text || '%')
+    and (coalesce(p_area_text, '') = '' or r.city ilike '%' || p_area_text || '%' or r.zip ilike p_area_text || '%')
     and (coalesce(p_dietary, '') = '' or p_dietary = any (o.dietary))
-    and (origin.g is null or coalesce(p_radius_miles, 0) <= 0 or r.location is null
-      or st_dwithin(r.location, origin.g, p_radius_miles * 1609.344))
+    and (origin.g is null or coalesce(p_radius_km, 0) <= 0 or r.location is null
+      or st_dwithin(r.location, origin.g, p_radius_km * 1000.0))
   order by
     case when coalesce(p_sort, case when origin.g is not null then 'distance' else 'ending' end) = 'distance'
       then st_distance(r.location, origin.g) end asc nulls last,

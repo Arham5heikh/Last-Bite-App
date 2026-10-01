@@ -1,5 +1,5 @@
 // Populates Supabase with demo accounts, menus, live offers and two weeks of order history around
-// greater Seattle. Usage: npm run seed   (run `npm run db:reset` first for a clean database).
+// St. John's, Newfoundland and Labrador. Usage: npm run seed   (run `npm run db:reset` first for a clean database).
 // Existing demo accounts are reused; each run posts a fresh set of live offers.
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
@@ -18,108 +18,70 @@ const db = createClient<Database>(url, key, { auth: { persistSession: false, aut
 const DEMO_PASSWORD = 'LastBite123';
 type Reason = Database['public']['Enums']['offer_reason'];
 
+// Downtown St. John's demo restaurants. Logins are <user>@lastbite.test (never real inboxes); phone numbers
+// and addresses are the restaurants' public listings. Postal codes use the right area (A1C etc.) with a
+// placeholder ending: replace them with each restaurant's real code before going live.
 const RESTAURANTS = [
-  { user: 'harborpho', name: 'Harbor Pho House', cuisine: 'Vietnamese', address: '1410 2nd Ave', city: 'Seattle', zip: '98101', lat: 47.6087, lng: -122.3385, tax: 1035 },
-  { user: 'ballardbread', name: 'Ballard Bread Co.', cuisine: 'Bakery', address: '5320 Ballard Ave NW', city: 'Seattle', zip: '98107', lat: 47.6665, lng: -122.3829, tax: 1035 },
-  { user: 'caphilltacos', name: 'Capitol Hill Taqueria', cuisine: 'Mexican', address: '401 Broadway E', city: 'Seattle', zip: '98102', lat: 47.6224, lng: -122.321, tax: 1035 },
-  { user: 'fremontpizza', name: 'Fremont Pizza Works', cuisine: 'Pizza', address: '3510 Fremont Ave N', city: 'Seattle', zip: '98103', lat: 47.651, lng: -122.3502, tax: 1035 },
-  { user: 'bellevuecurry', name: 'Bellevue Curry Kitchen', cuisine: 'Indian', address: '10500 NE 8th St', city: 'Bellevue', zip: '98004', lat: 47.617, lng: -122.2015, tax: 1030 },
-  { user: 'redmondpoke', name: 'Redmond Poke Shack', cuisine: 'Hawaiian', address: '16500 NE 74th St', city: 'Redmond', zip: '98052', lat: 47.671, lng: -122.118, tax: 1030 },
-  { user: 'kirklandsushi', name: 'Kirkland Sushi Bar', cuisine: 'Japanese', address: '120 Park Ln', city: 'Kirkland', zip: '98033', lat: 47.676, lng: -122.206, tax: 1030 },
+  { user: 'no4', name: 'No. 4 Restaurant & Bar', cuisine: 'American', address: '4 Cathedral St', city: "St. John's", zip: 'A1C 3N2', phone: '(709) 753-6600', lat: 47.5641, lng: -52.7071, tax: 1500 },
+  { user: 'merchanttavern', name: 'The Merchant Tavern', cuisine: 'Pub', address: '291 Water St', city: "St. John's", zip: 'A1C 1B9', phone: '(709) 722-5050', lat: 47.5623, lng: -52.7094, tax: 1500 },
+  { user: 'blueonwater', name: 'Blue on Water', cuisine: 'American', address: '319 Water St', city: "St. John's", zip: 'A1C 1B9', phone: '(709) 754-2583', lat: 47.5628, lng: -52.7087, tax: 1500 },
+  { user: 'yellowbelly', name: 'YellowBelly Brewery', cuisine: 'Pub', address: '288 Water St', city: "St. John's", zip: 'A1C 1B7', phone: '(709) 757-3784', lat: 47.5620, lng: -52.7100, tax: 1500 },
+  { user: 'olivers', name: "Oliver's Restaurant", cuisine: 'Italian', address: '160 Water St', city: "St. John's", zip: 'A1C 1A9', phone: '(709) 754-6444', lat: 47.5607, lng: -52.7125, tax: 1500 },
+  { user: 'blackcat', name: 'Black Cat Pizzeria', cuisine: 'Pizza', address: '13 LeMarchant Rd', city: "St. John's", zip: 'A1C 2G3', phone: '(709) 687-0709', lat: 47.5584, lng: -52.7168, tax: 1500 },
+  { user: 'rocket', name: 'Rocket Bakery & Fresh Food', cuisine: 'Bakery', address: '294 Water St', city: "St. John's", zip: 'A1C 1B7', phone: '(709) 700-1336', lat: 47.5622, lng: -52.7097, tax: 1500 },
+  { user: 'chinched', name: 'Chinched Restaurant', cuisine: 'Charcuterie', address: '5 Bates Hill', city: "St. John's", zip: 'A1C 4B2', phone: '(709) 722-3100', lat: 47.5631, lng: -52.7092, tax: 1500 },
+  { user: 'adelaide', name: 'The Adelaide Oyster House', cuisine: 'Seafood', address: '334 Water St', city: "St. John's", zip: 'A1C 1C2', phone: '(709) 722-7222', lat: 47.5631, lng: -52.7083, tax: 1500 },
+  { user: 'terre', name: 'Terre Restaurant & Cafe', cuisine: 'Cafe', address: '125 Water St', city: "St. John's", zip: 'A1C 1A9', phone: '(709) 383-2136', lat: 47.5601, lng: -52.7136, tax: 1500 },
 ];
 
-// More demo restaurants around the region (all fictional). Pins start near the ZIP code's center.
+// A fictional restaurant that is still waiting for approval, to show the owner console's approval queue.
+const PENDING_USER = 'pearlbakehouse';
 const REGIONAL: [string, string, string, string, string, string][] = [
-  ['desmoinesfish', 'Marina Fish & Chips', 'Seafood', '22300 Marine View Dr S', 'Des Moines', '98198'],
-  ['kentteriyaki', 'Kent Station Teriyaki', 'Japanese', '417 Ramsay Way', 'Kent', '98032'],
-  ['kentpupusas', 'El Comal Pupuseria', 'Salvadoran', '25600 104th Ave SE', 'Kent', '98030'],
-  ['fedwaykbbq', 'Federal Way K-BBQ House', 'Korean', '31500 Pacific Hwy S', 'Federal Way', '98003'],
-  ['fedwaybakery', 'Twin Lakes Bakery', 'Bakery', '2100 SW 336th St', 'Federal Way', '98023'],
-  ['tacomathai', '6th Ave Thai Kitchen', 'Thai', '2700 6th Ave', 'Tacoma', '98406'],
-  ['tacomaburger', 'Stadium Burger Co.', 'Burgers', '400 N Tacoma Ave', 'Tacoma', '98403'],
-  ['tacomatamales', 'Hilltop Tamaleria', 'Mexican', '1100 MLK Jr Way', 'Tacoma', '98405'],
-  ['fifepho', 'Fife Pho & Grill', 'Vietnamese', '5400 Pacific Hwy E', 'Fife', '98424'],
-  ['olympiacafe', 'Capitol Lake Cafe', 'Cafe', '500 Capitol Way S', 'Olympia', '98501'],
-  ['olympiapizza', 'Olympia Brick Oven', 'Pizza', '3500 Pacific Ave SE', 'Olympia', '98501'],
-  ['laceycurry', 'Lacey Spice Route', 'Indian', '5800 Martin Way E', 'Lacey', '98516'],
-  ['puyallupdeli', 'Meridian Deli', 'American', '300 S Meridian', 'Puyallup', '98371'],
-  ['auburnnoodle', 'Main Street Noodle Bar', 'Chinese', '200 E Main St', 'Auburn', '98002'],
-  ['rentontacos', 'Renton Landing Tacos', 'Mexican', '800 N 10th St', 'Renton', '98057'],
-  ['burienmed', 'Burien Mediterranean Grill', 'Mediterranean', '15100 Ambaum Blvd SW', 'Burien', '98166'],
-  ['tukwilasushi', 'Southcenter Sushi', 'Japanese', '17000 Southcenter Pkwy', 'Tukwila', '98188'],
-  ['lakewoodsoul', 'Lakewood Soul Kitchen', 'American', '6100 Mt Tacoma Dr SW', 'Lakewood', '98499'],
-  ['everettbbq', 'Everett Waterfront BBQ', 'BBQ', '1700 W Marine View Dr', 'Everett', '98201'],
-  ['lynnwoodgreens', 'Alderwood Greens', 'Salad', '3000 184th St SW', 'Lynnwood', '98037'],
-  ['bremertonchowder', 'Ferry Dock Chowder', 'Seafood', '200 Washington Ave', 'Bremerton', '98337'],
-  ['issaquahbakehouse', 'Front Street Bakehouse', 'Bakery', '100 Front St N', 'Issaquah', '98027'],
+  [PENDING_USER, 'Pearl Town Bakehouse', 'Bakery', '760 Topsail Rd', 'Mount Pearl', 'A1N 3J5'],
 ];
 
-// Menus: [restaurant user, item name, description, dietary, price]
+// Menus (illustrative, not the restaurants' official menus): [restaurant user, item name, description, dietary, price]
 const MENU: [string, string, string, string, number][] = [
-  ['harborpho', 'Large Beef Pho', 'Rare steak & brisket in 12-hour beef broth with rice noodles, herbs and lime.', '', 16.95],
-  ['harborpho', 'Lemongrass Tofu Banh Mi', 'Crispy lemongrass tofu, pickled carrot, cucumber and cilantro on a toasted baguette.', 'vegetarian,dairy-free', 11.5],
-  ['harborpho', 'Fresh Spring Rolls (3)', 'Shrimp, vermicelli and herbs with peanut sauce.', 'gluten-free', 8.5],
-  ['ballardbread', 'Bakery Surprise Bag', 'Assorted croissants, scones and a loaf from today.', 'vegetarian', 24],
-  ['ballardbread', 'Seeded Sourdough Loaf', 'Naturally leavened, baked this morning.', 'vegan', 9],
-  ['ballardbread', 'Chocolate Croissant', 'All-butter croissant with dark chocolate.', 'vegetarian', 5],
-  ['caphilltacos', 'Carnitas Burrito Plate', 'Slow-cooked pork, rice, beans and salsa verde.', 'gluten-free', 15.25],
-  ['caphilltacos', 'Veggie Taco Trio', 'Roasted sweet potato, black bean and poblano tacos.', 'vegetarian', 12],
-  ['caphilltacos', 'Chips & Guacamole', 'House-made tortilla chips and fresh guacamole.', 'vegan,gluten-free', 7],
-  ['fremontpizza', 'Whole Margherita Pizza (16")', 'San Marzano tomato, fresh mozzarella and basil.', 'vegetarian', 24],
-  ['fremontpizza', 'Pepperoni Slices (2)', 'Two big New York-style slices.', '', 8],
-  ['fremontpizza', 'Caesar Salad', 'Romaine, parmesan, croutons and lemon Caesar dressing.', 'vegetarian', 10],
-  ['bellevuecurry', 'Chicken Tikka Masala + Rice', 'Tandoori chicken in creamy tomato masala with basmati rice.', 'gluten-free', 17.5],
-  ['bellevuecurry', 'Chana Masala Bowl', 'Chickpeas simmered with tomato, ginger and spices.', 'vegan,gluten-free', 13],
-  ['bellevuecurry', 'Garlic Naan', 'Fresh from the tandoor.', 'vegetarian', 4.5],
-  ['redmondpoke', 'Ahi Poke Bowl (Regular)', 'Ahi tuna, avocado, cucumber and seaweed salad over rice.', 'dairy-free', 16],
-  ['kirklandsushi', "Chef's Nigiri Set (8 pc)", "Chef's selection of seasonal nigiri.", 'gluten-free', 32],
-  ['kirklandsushi', 'Veggie Roll Combo', 'Avocado, cucumber and sweet potato rolls.', 'vegan', 14],
-  ['kirklandsushi', 'Miso Soup', 'Tofu, wakame and scallion.', 'vegan', 4],
+  ['no4', 'Crispy Cod Tacos', 'Beer-battered Atlantic cod, lime crema, pickled red onion and slaw on corn tortillas.', '', 19],
+  ['no4', 'No. 4 Smash Burger', 'Double smashed beef patty, aged cheddar, house pickles and fries.', '', 22],
+  ['merchanttavern', 'Pan-Seared Atlantic Cod', 'Local cod loin, brown butter, crushed new potatoes, capers and greens.', 'gluten-free', 32],
+  ['merchanttavern', 'Tavern Rigatoni', 'Slow-cooked pork ragù, San Marzano tomato, parmesan and basil.', '', 26],
+  ['blueonwater', 'Truffle Fries', 'Hand-cut fries, white truffle oil, Parmigiano Reggiano and rosemary aioli.', 'vegetarian', 16],
+  ['blueonwater', 'Duck BLT', 'Smoked duck breast, double-smoked bacon, tomato and garlic aioli on brioche.', '', 26],
+  ['yellowbelly', "St. John's Stout Braised Short Rib", 'Braised in house stout with Yukon gold purée, glazed carrots and pan jus.', 'gluten-free', 36],
+  ['yellowbelly', 'Fish & Chips (1 pc)', 'Ale-battered Atlantic cod, hand-cut fries, tartar sauce and lemon.', '', 17],
+  ['olivers', 'Chicken Parmesan Sandwich', 'Breaded chicken cutlet, marinara and fior di latte on toasted ciabatta.', '', 22],
+  ['olivers', 'Chickpea & Walnut Pâté', 'Herb chickpea spread with olives, pickled shallots and crostini.', 'vegan,dairy-free', 18],
+  ['blackcat', 'Chicken Bacon Ranch Pizza', 'Sourdough crust, roasted garlic chicken, crispy bacon and buttermilk ranch.', '', 23],
+  ['blackcat', 'Hot Honey Pepperoni Pizza', 'Cup & char pepperoni, whipped ricotta, chili oil and hot honey.', 'spicy', 22],
+  ['rocket', 'Best Kind Breakfast Sandwich', 'Egg, country ham and aged cheddar on a fresh cheddar biscuit.', '', 12],
+  ['rocket', 'Day-End Pastry Box (4)', "Assorted croissants, scones and sweet buns from today's bake.", 'vegetarian', 16],
+  ['chinched', 'House Charcuterie Board', 'Chef-cured meats, house pickles, grainy mustard and grilled sourdough.', '', 28],
+  ['chinched', 'Crispy Pork Belly', 'Twice-cooked pork belly, apple purée, charred greens and cider jus.', 'gluten-free,dairy-free', 26],
+  ['adelaide', 'Fresh Oysters (Half Dozen)', 'East Coast oysters with mignonette, horseradish and lemon.', 'gluten-free,dairy-free', 21],
+  ['adelaide', 'Fish Tacos (3)', 'Crispy fried fish, chipotle mayo, pickled jalapeño and slaw.', 'spicy', 18],
+  ['terre', 'Seasonal Grain Bowl', 'Roasted root vegetables, farro, local greens, pickled beets and herb vinaigrette.', 'vegan,dairy-free', 18],
+  ['terre', 'Newfoundland Cod Cakes', 'Salt cod and potato cakes with tartar sauce, mustard pickles and greens.', '', 16],
 ];
 
 // Offers: [restaurant user, menu item, reason, note, discount %, qty, discard timer (hours)]
 const OFFERS: [string, string, Reason, string, number, number, number][] = [
-  ['harborpho', 'Large Beef Pho', 'wrong_order', 'Customer ordered chicken instead. Broth and noodles packed separately.', 50, 2, 3],
-  ['harborpho', 'Lemongrass Tofu Banh Mi', 'delayed_order', 'Freshly made, delivery driver never arrived.', 40, 3, 2],
-  ['ballardbread', 'Bakery Surprise Bag', 'end_of_day', '', 65, 6, 4],
-  ['ballardbread', 'Seeded Sourdough Loaf', 'overproduction', '', 45, 4, 5],
-  ['caphilltacos', 'Carnitas Burrito Plate', 'wrong_order', 'Order was placed twice by mistake.', 55, 1, 2],
-  ['caphilltacos', 'Veggie Taco Trio', 'unclaimed_order', '', 40, 2, 4],
-  ['fremontpizza', 'Whole Margherita Pizza (16")', 'unclaimed_order', 'Pickup order never collected. Still warm!', 60, 1, 2],
-  ['fremontpizza', 'Pepperoni Slices (2)', 'end_of_day', '', 50, 8, 3],
-  ['bellevuecurry', 'Chicken Tikka Masala + Rice', 'overproduction', 'Catering overage from a corporate lunch.', 50, 10, 4],
-  ['bellevuecurry', 'Chana Masala Bowl', 'delayed_order', '', 45, 2, 3],
-  ['redmondpoke', 'Ahi Poke Bowl (Regular)', 'wrong_order', 'Wrong base (white rice instead of brown).', 45, 1, 2],
-  ['kirklandsushi', "Chef's Nigiri Set (8 pc)", 'unclaimed_order', 'Prepared for a reservation that did not show.', 40, 2, 3],
-  ['kirklandsushi', 'Veggie Roll Combo', 'end_of_day', '', 50, 5, 4],
+  ['no4', 'Crispy Cod Tacos', 'unclaimed_order', 'Pickup order never collected.', 50, 1, 2],
+  ['merchanttavern', 'Pan-Seared Atlantic Cod', 'wrong_order', 'Guest asked for no capers. Cooked minutes ago.', 50, 1, 2],
+  ['blueonwater', 'Truffle Fries', 'wrong_order', 'Accidental duplicate side order.', 50, 2, 2],
+  ['yellowbelly', "St. John's Stout Braised Short Rib", 'delayed_order', 'Delivery driver never arrived.', 50, 1, 3],
+  ['yellowbelly', 'Fish & Chips (1 pc)', 'wrong_order', 'Wrong side (fries instead of salad).', 45, 1, 2],
+  ['olivers', 'Chicken Parmesan Sandwich', 'wrong_order', 'Duplicate ticket.', 50, 1, 2],
+  ['blackcat', 'Hot Honey Pepperoni Pizza', 'end_of_day', 'Extra bake at end of shift.', 55, 2, 3],
+  ['rocket', 'Day-End Pastry Box (4)', 'end_of_day', '', 60, 4, 4],
+  ['chinched', 'House Charcuterie Board', 'overproduction', 'Prepared for a private event overage.', 50, 2, 3],
+  ['adelaide', 'Fresh Oysters (Half Dozen)', 'unclaimed_order', 'Reservation did not show.', 45, 1, 2],
+  ['terre', 'Seasonal Grain Bowl', 'overproduction', 'Lunch prep overage.', 50, 3, 4],
 ];
 
 // [restaurant user, dish, description, dietary, price, reason, discount %, qty]
 const REGIONAL_MENU: [string, string, string, string, number, Reason, number, number][] = [
-  ['desmoinesfish', 'Halibut Fish & Chips', 'Beer-battered halibut, fries and slaw.', '', 18.5, 'wrong_order', 45, 3],
-  ['desmoinesfish', 'Clam Chowder Bowl', 'New England style with oyster crackers.', 'gluten-free', 9, 'end_of_day', 50, 6],
-  ['kentteriyaki', 'Chicken Teriyaki Plate', 'Grilled chicken, rice and salad.', 'dairy-free', 13.5, 'overproduction', 40, 8],
-  ['kentpupusas', 'Pupusa Combo (3)', 'Cheese, bean and revuelta pupusas with curtido.', 'gluten-free', 12, 'unclaimed_order', 50, 2],
-  ['fedwaykbbq', 'Bulgogi Lunch Box', 'Marinated beef, rice and banchan.', 'dairy-free', 17, 'delayed_order', 45, 2],
-  ['fedwaybakery', 'Pastry Rescue Box', "Today's croissants, danishes and muffins.", 'vegetarian', 20, 'end_of_day', 60, 5],
-  ['tacomathai', 'Pad Thai with Chicken', 'Rice noodles, egg, peanuts and lime.', 'dairy-free', 15, 'wrong_order', 50, 1],
-  ['tacomathai', 'Green Curry with Tofu', 'Coconut green curry with jasmine rice.', 'vegan,gluten-free', 14, 'overproduction', 40, 4],
-  ['tacomaburger', 'Double Smash Burger + Fries', 'Two patties, cheese and house sauce.', '', 16, 'unclaimed_order', 50, 2],
-  ['tacomatamales', 'Pork Tamales (half dozen)', 'Red chile pork tamales.', 'gluten-free', 18, 'end_of_day', 45, 4],
-  ['fifepho', 'Brisket Pho', 'Slow-simmered broth with brisket and herbs.', 'dairy-free', 14.5, 'delayed_order', 40, 3],
-  ['olympiacafe', 'Sandwich & Soup Combo', "Half sandwich and today's soup.", 'vegetarian', 13, 'end_of_day', 50, 5],
-  ['olympiapizza', 'Wood-Fired Pepperoni Pizza', '12-inch pizza from our brick oven.', '', 19, 'unclaimed_order', 55, 1],
-  ['laceycurry', 'Butter Chicken + Naan', 'Creamy tomato curry with garlic naan.', '', 17, 'overproduction', 45, 6],
-  ['puyallupdeli', 'Turkey Club Sandwich', 'Roast turkey, bacon, lettuce and tomato on sourdough.', '', 12.5, 'wrong_order', 40, 2],
-  ['auburnnoodle', 'Beef Chow Fun', 'Wok-tossed wide rice noodles with beef.', 'dairy-free', 14, 'delayed_order', 50, 2],
-  ['rentontacos', 'Al Pastor Taco Plate', 'Four tacos with rice and beans.', 'gluten-free', 13, 'end_of_day', 45, 4],
-  ['burienmed', 'Chicken Shawarma Plate', 'Rice, salad, hummus and garlic sauce.', 'halal', 16, 'overproduction', 50, 5],
-  ['tukwilasushi', 'Salmon Poke Bowl', 'Salmon, avocado and cucumber over rice.', 'dairy-free', 17, 'wrong_order', 45, 1],
-  ['lakewoodsoul', 'Fried Chicken Dinner', 'Three pieces, mac & cheese and greens.', '', 18, 'unclaimed_order', 50, 2],
-  ['everettbbq', 'Brisket Sandwich + Side', 'Smoked brisket on a brioche bun.', '', 16.5, 'end_of_day', 40, 6],
-  ['lynnwoodgreens', 'Harvest Grain Bowl', 'Farro, roasted squash, kale and tahini.', 'vegan', 13.5, 'overproduction', 50, 4],
-  ['bremertonchowder', 'Seafood Chowder Bread Bowl', 'Clams, salmon and shrimp in a sourdough bowl.', '', 14, 'end_of_day', 45, 3],
-  ['issaquahbakehouse', 'Cinnamon Roll 4-Pack', 'Baked this morning with cream cheese icing.', 'vegetarian', 16, 'end_of_day', 60, 3],
+  [PENDING_USER, 'Toutons & Molasses (4)', 'Fried bread dough with molasses, made fresh this morning.', 'vegetarian', 12, 'end_of_day', 50, 3],
 ];
 
 function must<T>(res: { data: T; error: { message: string } | null }, what: string): NonNullable<T> {
@@ -197,13 +159,12 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
 
   const ids: Record<string, number> = {};
   for (const r of RESTAURANTS) {
-    const owner = await user(r.user, 'restaurant', { name: r.name, address: r.address, city: r.city, zip: r.zip, cuisine: r.cuisine, lat: r.lat, lng: r.lng });
+    const owner = await user(r.user, 'restaurant', { name: r.name, address: r.address, city: r.city, zip: r.zip, phone: r.phone, cuisine: r.cuisine, lat: r.lat, lng: r.lng });
     ids[r.user] = await restaurantId(owner);
     must(await db.from('restaurants').update({
-      status: 'approved', tax_rate_bps: r.tax, description: `Neighborhood ${r.cuisine.toLowerCase()} spot in ${r.city}.`,
-      phone: `(206) 555-01${String(Object.keys(ids).length).padStart(2, '0')}`,
+      status: 'approved', tax_rate_bps: r.tax, description: `${r.cuisine} in downtown ${r.city}.`, phone: r.phone,
     }).eq('id', ids[r.user]).select('id'), 'approve');
-    // Seattle-area demo restaurants have finished Stripe Connect onboarding (mock accounts).
+    // Downtown demo restaurants have finished Stripe Connect onboarding (mock accounts).
     must(await db.from('restaurant_payment_accounts').update({
       stripe_account_id: `acct_mock_${String(ids[r.user]).padStart(6, '0')}`, charges_enabled: true, payouts_enabled: true,
       details_submitted: true, bank_summary: 'MOCK BANK ••••6789',
@@ -212,15 +173,15 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
 
   for (const [i, [u, name, cuisine, address, city, zip]] of REGIONAL.entries()) {
     const z = must(await db.rpc('resolve_area', { p_query: zip }), 'zip')[0];
-    // Small, deterministic offset so restaurants in the same ZIP don't share one pin.
+    // Small, deterministic offset so restaurants in the same postal area don't share one pin.
     const lat = z.lat + (((i * 37) % 11) - 5) * 0.0012;
     const lng = z.lng + (((i * 53) % 11) - 5) * 0.0016;
     const owner = await user(u, 'restaurant', { name, address, city, zip, cuisine, lat, lng });
     ids[u] = await restaurantId(owner);
     must(await db.from('restaurants').update({
       // One restaurant waits for approval, to show the admin approval queue.
-      status: u === 'issaquahbakehouse' ? 'pending' : 'approved',
-      description: `Neighborhood ${cuisine.toLowerCase()} spot in ${city}.`, phone: `(253) 555-${String(1000 + i).slice(-4)}`,
+      status: u === PENDING_USER ? 'pending' : 'approved',
+      description: `${cuisine} in ${city}.`, phone: `(709) 555-${String(1000 + i).slice(-4)}`,
     }).eq('id', ids[u]).select('id'), 'approve');
   }
 
@@ -255,7 +216,7 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
   // Two weeks of completed demo orders so the admin dashboard, reports and payouts have data.
   const hasHistory = must(await db.from('orders').select('id').eq('user_id', demoId).eq('status', 'picked_up').limit(1), 'orders');
   if (!hasHistory.length) {
-    const approved = new Set(Object.entries(ids).filter(([u]) => u !== 'issaquahbakehouse').map(([, id]) => id));
+    const approved = new Set(Object.entries(ids).filter(([u]) => u !== PENDING_USER).map(([, id]) => id));
     const offers = must(await db.from('offers').select('id, menu_item_id, restaurant_id'), 'offers');
     const taxes = new Map(must(await db.from('restaurants').select('id, tax_rate_bps'), 'restaurants').map((r) => [r.id, r.tax_rate_bps]));
     const items = Object.values(menuId).filter((m) => approved.has(m.restaurant))
@@ -272,7 +233,7 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
         const m = items[Math.floor(rand() * items.length)];
         const qty = 1 + Math.floor(rand() * 2);
         const pct = [40, 45, 50, 55, 60][Math.floor(rand() * 5)];
-        const q = quote({ originalUnitCents: m.price, discountPct: pct, quantity: qty, serviceFeeBps, taxRateBps: taxes.get(m.restaurant) ?? 1035 });
+        const q = quote({ originalUnitCents: m.price, discountPct: pct, quantity: qty, serviceFeeBps, taxRateBps: taxes.get(m.restaurant) ?? 1500, taxServiceFee: true });
         const created = new Date(now - d * 86400000 - Math.floor(rand() * 8 + 1) * 3600000);
         const picked = new Date(created.getTime() + (15 + Math.floor(rand() * 60)) * 60000);
         rows.push({
@@ -285,7 +246,7 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
       }
     }
     const inserted = must(await db.from('orders').insert(rows).select('id, restaurant_id, subtotal_cents'), 'history');
-    // Connected (Seattle-area) restaurants were paid through Stripe Connect at pickup.
+    // Connected (downtown) restaurants were paid through Stripe Connect at pickup.
     const connected = new Set(RESTAURANTS.map((r) => ids[r.user]));
     for (const o of inserted.filter((x) => connected.has(x.restaurant_id))) {
       must(await db.rpc('record_payout', {
@@ -302,8 +263,8 @@ Create them first with: npx supabase db push   (see "Run it locally" in README.m
   console.log(`  Customer login:    demo / ${DEMO_PASSWORD}`);
   console.log(`  Owner/admin login: admin / ${DEMO_PASSWORD}  (demo only: create your real one with npm run create-admin)`);
   console.log(`  Restaurant logins (password ${DEMO_PASSWORD}):`);
-  console.log(`    Seattle/Eastside (Stripe connected): ${RESTAURANTS.map((r) => r.user).join(', ')}`);
-  console.log(`    Around the region: ${REGIONAL.map((r) => `${r[0]} (${r[4]})`).join(', ')}`);
+  console.log(`    Downtown St. John's (Stripe connected): ${RESTAURANTS.map((r) => r.user).join(', ')}`);
+  console.log(`    Awaiting approval: ${REGIONAL.map((r) => `${r[0]} (${r[4]})`).join(', ')}`);
 }
 
 main().catch((err) => {

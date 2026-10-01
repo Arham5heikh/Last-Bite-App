@@ -46,7 +46,7 @@ export function OfferCard({ offer, onOrder }: { offer: OfferRow; onOrder: () => 
         <div className="text-sm text-muted">{offer.restaurant_name} · {offer.city}</div>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-2">
           <span className="inline-flex items-center gap-1 text-accent-ink"><Clock className="size-3.5" /> Pick up by {fmtTime(offer.pickup_end)}</span>
-          {offer.distance_miles != null && <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" /> {offer.distance_miles} mi</span>}
+          {offer.distance_km != null && <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" /> {offer.distance_km} km</span>}
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
           <Badge tone="amber">{OFFER_REASONS[offer.reason]}</Badge>

@@ -218,7 +218,7 @@ export async function ordersCsv(params: URLSearchParams) {
     name: `LastBite-orders-${r.from}-to-${r.to}.csv`,
     csv: toCsv([
       ['Order #', 'Created', 'Picked up', 'Status', 'Customer', 'Restaurant', 'Item', 'Qty', 'Original unit', 'Discount %', 'Unit price', 'Food subtotal',
-        'Service fee', 'Sales tax', 'Total', 'Credit applied', 'Refunded to original payment', 'Refunded as platform credit', 'Card', 'Transaction ID'],
+        'Service fee', 'HST', 'Total', 'Credit applied', 'Refunded to original payment', 'Refunded as platform credit', 'Card', 'Transaction ID'],
       ...[...rows].reverse().map((o) => [o.id, o.created_at, o.picked_up_at ?? '', o.status, o.customer_username, o.restaurants?.name ?? '', o.item_title,
         o.quantity, dollars(o.original_unit_price_cents), o.discount_pct, dollars(o.unit_price_cents), dollars(o.subtotal_cents), dollars(o.service_fee_cents),
         dollars(o.tax_cents), dollars(o.total_cents), dollars(o.credit_applied_cents), dollars(o.refunded_cents), dollars(o.credited_cents), o.card_label,
@@ -276,7 +276,7 @@ export async function payoutsCsv() {
 
 // ---------------------------------------------------------------- sales tax
 
-// Retail sales tax collected on completed orders, by restaurant location (for the WA excise tax return).
+// HST collected on completed orders, by restaurant location (for the GST/HST return).
 export async function tax(params: URLSearchParams) {
   const r = range(params, 30);
   const [sold, rest] = await Promise.all([
@@ -307,7 +307,7 @@ export async function taxCsv(params: URLSearchParams) {
   return {
     name: `LastBite-sales-tax-${t.range.from}-to-${t.range.to}.csv`,
     csv: toCsv([
-      ['City', 'ZIP', 'Rate %', 'Orders', 'Taxable sales', 'Sales tax collected'],
+      ['Town', 'Postal code', 'Rate %', 'Orders', 'Taxable sales', 'HST collected'],
       ...t.rows.map((x) => [x.city, x.zip, (x.rateBps / 100).toFixed(2), x.orders, dollars(x.taxableCents), dollars(x.taxCents)]),
     ]),
   };

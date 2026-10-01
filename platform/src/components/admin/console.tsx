@@ -16,7 +16,7 @@ import { UsersPanel } from './users';
 
 const TABS = [
   ['overview', 'Overview', BarChart3], ['restaurants', 'Restaurants', Store], ['customers', 'Customers', Users], ['orders', 'Orders', ClipboardList],
-  ['offers', 'Live offers', Tag], ['payouts', 'Payouts', Banknote], ['tax', 'Sales tax', Landmark], ['settings', 'Settings', Settings], ['audit', 'Audit log', ScrollText],
+  ['offers', 'Live offers', Tag], ['payouts', 'Payouts', Banknote], ['tax', 'HST', Landmark], ['settings', 'Settings', Settings], ['audit', 'Audit log', ScrollText],
 ] as const;
 
 export function AdminConsole({ adminId }: { adminId: string }) {

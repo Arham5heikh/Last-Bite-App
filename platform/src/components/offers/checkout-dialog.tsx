@@ -18,7 +18,7 @@ import { Checkbox, Input } from '@/components/ui/field';
 import { SectionLabel } from '@/components/ui/misc';
 import { MIN_CARD_CHARGE_CENTS, OFFER_REASONS } from '@/lib/constants';
 import { fmtTime, money, pct } from '@/lib/format';
-import { distanceMiles } from '@/lib/geo';
+import { distanceKm } from '@/lib/geo';
 import type { Quote } from '@/lib/pricing';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { OfferImage } from './offer-card';
@@ -123,8 +123,8 @@ function CheckoutContent({ offer, origin, payment, onClose }: { offer: OfferRow;
 
   if (done) return <Confirmation order={done} onClose={onClose} />;
 
-  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${offer.restaurant_name}, ${offer.address}, ${offer.city}, WA ${offer.zip}`)}`;
-  const away = origin && offer.lat != null ? distanceMiles(origin.lat, origin.lng, offer.lat, offer.lng) : null;
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${offer.restaurant_name}, ${offer.address}, ${offer.city}, NL ${offer.zip}`)}`;
+  const away = origin && offer.lat != null ? distanceKm(origin.lat, origin.lng, offer.lat, offer.lng) : null;
   const q = quote.data;
   return (
     <DialogContent title={offer.title}>
@@ -135,9 +135,9 @@ function CheckoutContent({ offer, origin, payment, onClose }: { offer: OfferRow;
       )}
       <p className="mb-1"><b>{offer.restaurant_name}</b>{offer.cuisine ? ` · ${offer.cuisine}` : ''}</p>
       <p className="mb-3 text-sm text-muted">
-        {offer.address}, {offer.city}, WA {offer.zip} · <a href={mapUrl} target="_blank" rel="noopener">Map</a>
+        {offer.address}, {offer.city}, NL {offer.zip} · <a href={mapUrl} target="_blank" rel="noopener">Map</a>
         {offer.phone && <> · <a href={`tel:${offer.phone}`}>{offer.phone}</a></>}
-        {away != null && <> · {away.toFixed(1)} mi away</>}
+        {away != null && <> · {away.toFixed(1)} km away</>}
       </p>
       {offer.description && <p className="mb-3 text-ink-2">{offer.description}</p>}
       <div className="mb-3 flex flex-wrap gap-1.5">
@@ -173,7 +173,7 @@ function CheckoutContent({ offer, origin, payment, onClose }: { offer: OfferRow;
               <tr><td>{q.quantity} × {offer.title} <span className="text-muted line-through">{money(q.originalUnitCents)}</span> {money(q.unitPriceCents)}</td><td>{money(q.subtotalCents)}</td></tr>
               <tr><td colSpan={2} className="text-success-ink">You save {money(q.savingsCents)} ({q.discountPct}% off)</td></tr>
               <tr><td>Service fee ({pct(q.serviceFeeBps)})</td><td>{money(q.serviceFeeCents)}</td></tr>
-              <tr><td>WA sales tax ({pct(q.taxRateBps)})</td><td>{money(q.taxCents)}</td></tr>
+              <tr><td>HST ({pct(q.taxRateBps)})</td><td>{money(q.taxCents)}</td></tr>
               <tr className="border-t border-line text-base font-bold"><td className="pt-2">Total</td><td className="pt-2">{money(q.totalCents)}</td></tr>
               {creditCents > 0 && (
                 <>

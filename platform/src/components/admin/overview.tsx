@@ -36,7 +36,7 @@ export function OverviewPanel({ range, setRange, go }: { range: Range; setRange:
         <Kpi value={money(t.serviceFeesCents)} label="Last Bite revenue (service fees)" />
         <Kpi value={money(t.gmvCents)} label="Total charged to customers" />
         <Kpi value={money(t.foodSalesCents)} label="Restaurant food sales" />
-        <Kpi value={money(t.salesTaxCents)} label="Sales tax collected" />
+        <Kpi value={money(t.salesTaxCents)} label="HST collected" />
         <Kpi value={t.ordersPickedUp} label="Orders picked up" />
         <Kpi value={t.mealsRescued} label="Meals rescued from waste" />
         <Kpi value={money(t.discountsCents)} label="Customer savings" />

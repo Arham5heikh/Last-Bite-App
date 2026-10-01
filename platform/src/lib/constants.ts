@@ -36,13 +36,13 @@ export const homeFor = (role: Role | null | undefined) =>
 const CUISINE_EMOJI: Record<string, string> = {
   seafood: '🦐', salvadoran: '🫓', bbq: '🍖', vietnamese: '🍜', bakery: '🥐', mexican: '🌮', pizza: '🍕', indian: '🍛',
   hawaiian: '🐟', japanese: '🍣', thai: '🍲', chinese: '🥡', italian: '🍝', burgers: '🍔', american: '🍔', korean: '🍱',
-  mediterranean: '🥙', cafe: '☕', dessert: '🍰', salad: '🥗',
+  mediterranean: '🥙', cafe: '☕', dessert: '🍰', salad: '🥗', pub: '🍺', charcuterie: '🥓',
 };
 export const cuisineEmoji = (c?: string | null) => CUISINE_EMOJI[String(c ?? '').toLowerCase()] ?? '🍽️';
 
 const CUISINE_HUE: Record<string, number> = {
   seafood: 200, salvadoran: 45, bbq: 15, vietnamese: 28, bakery: 40, mexican: 12, pizza: 0, indian: 30, hawaiian: 190,
   japanese: 340, thai: 60, chinese: 355, italian: 110, burgers: 20, american: 20, korean: 320, mediterranean: 80,
-  cafe: 35, dessert: 300, salad: 100,
+  cafe: 35, dessert: 300, salad: 100, pub: 38, charcuterie: 8,
 };
 export const cuisineHue = (c?: string | null) => CUISINE_HUE[String(c ?? '').toLowerCase()] ?? 150;
