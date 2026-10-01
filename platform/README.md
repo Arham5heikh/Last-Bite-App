@@ -15,7 +15,7 @@ Last Bite is a marketplace where restaurants in St. John's, Newfoundland and Lab
 |---|---|
 | **Framework** | Next.js 16 (App Router, Server Components, Server Actions, Route Handlers, `proxy.ts`), TypeScript (strict) |
 | **Styling & UI** | Tailwind CSS v4, Lucide icons, shadcn-style primitives built on Radix UI (`src/components/ui`) |
-| **Database & Auth** | Supabase: PostgreSQL with **PostGIS**, **Row Level Security** on every table, **Supabase Auth** (email + password; log in with email or user name), Supabase Storage for food photos, `pg_cron` for cleanup |
+| **Database & Auth** | Supabase: PostgreSQL with **PostGIS**, **Row Level Security** on every table, **Supabase Auth** (email + password; log in with email or user name; password reset with a 6-digit email code), Supabase Storage for food photos, `pg_cron` for cleanup |
 | **State & real-time** | TanStack Query for client data, **Supabase Realtime** channels (WebSockets) for the live offer feed, the restaurant's new-order bell and live order status |
 | **Payments** | **Stripe Connect** (Express accounts): manual-capture card holds as destination charges with a **platform application fee**, transfers, reversals and refunds. A built-in mock processor runs when no Stripe keys are set |
 | **Maps & location** | Leaflet with OpenStreetMap tiles, **PostGIS** spatial search (`ST_DWithin` / `ST_Distance` on `geography`), **haversine** distance in the browser (km), the Northeast Avalon postal areas (A1A–A1X) |
@@ -77,7 +77,7 @@ legacy/                  The previous Express + SQLite version, kept for referen
 - **Owners edit only safe columns** (column-level grants): a restaurant can change its address or tax rate, never its approval status; users can't change their role.
 - **Money and order state change only inside Postgres functions** (`reserve_order`, `finish_pickup`, `apply_refund`, `record_payout`, ...). Those are callable only by the server's secret key, after the server has checked who is asking. Offers are locked while reserving, so the last item can never be sold twice.
 - **Sign-up is enforced by a database trigger:** the account is created only if the current version of every required legal document was accepted, and sign-up can never create an admin.
-- Wrong PINs are rate-limited (15 per 10 minutes per restaurant); uploads are checked by file signature; Stripe webhooks are signature-verified; the cron route needs a bearer secret.
+- Wrong PINs are rate-limited (15 per 10 minutes per restaurant), and wrong password-reset codes too (5 per 15 minutes per email address); uploads are checked by file signature; Stripe webhooks are signature-verified; the cron route needs a bearer secret.
 
 ## Run it locally
 
@@ -190,11 +190,15 @@ Use a commercial map tile provider in production (`NEXT_PUBLIC_MAP_TILE_URL`). O
 
 ## Branded emails
 
-The "confirm your email" message sent after sign-up comes from **Supabase Auth**, not from the app. Last Bite replaces Supabase's plain default with a branded one: `supabase/templates/confirmation.html` (logo, a welcome with the user's name, and different wording for customers and restaurants). The local stack (`npm run db:start`) uses it automatically through `supabase/config.toml`.
+The "confirm your email" message sent after sign-up and the password reset code come from **Supabase Auth**, not from the app. Last Bite replaces Supabase's plain defaults with branded ones (the reset email is described under Password reset below). The sign-up one is `supabase/templates/confirmation.html` (logo, a welcome with the user's name, and different wording for customers and restaurants). The local stack (`npm run db:start`) uses it automatically through `supabase/config.toml`.
 
 For a project on supabase.com, install it with `npm run email:template`. It uploads the logo to a public `brand` storage bucket in your project (email apps need a public web address for images), then sets the **Confirm signup** email's subject and body through the Supabase Management API. That needs a personal access token: create one at [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) and add `SUPABASE_ACCESS_TOKEN=...` to `.env.local` (or the script uses the one `npx supabase login` saved, where it can find it). Building the app doesn't change the email: it lives in Supabase. Without a token, the script writes `confirm-signup-email.html` and tells you where to paste it (**Authentication → Emails → Confirm signup**, source view).
 
 Keep **Authentication → URL Configuration → Site URL** set to your site's address: the button links to `<Site URL>/auth/confirm`. After signing up, people see a "Check your email" page with **Resend confirmation email** (once a minute) and **Back to login**; trying to log in before confirming offers the resend button too.
+
+### Password reset
+
+**Forgot password?** on the log-in page opens `/forgot-password`: the user enters their registered email, receives a **6-digit verification code** (`supabase/templates/recovery.html`, Supabase's "Reset password" email), types it in, then chooses a new password (same rules as sign-up). The page gives the same answer whether or not the email has an account, so it can't be used to find out who is registered. Codes work once and expire after an hour (`otp_expiry`); after 5 wrong codes for an address, it has to wait 15 minutes. Only a browser that just verified a code can set the new password (a short-lived cookie), and saving it signs the account out everywhere else. `npm run email:template` installs this email too; locally, read the codes at [127.0.0.1:54324](http://127.0.0.1:54324) (Mailpit).
 
 **Sending to real customers:** Supabase's built-in email service is only for testing. It sends a few emails an hour, and only to your project team's addresses. Before launch, connect your own email provider in **Authentication → Emails → SMTP Settings** (for example Resend, Postmark or Amazon SES), with a sender like `Last Bite <hello@your-domain>`. The template stays the same.
 

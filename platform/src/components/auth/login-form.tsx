@@ -56,6 +56,7 @@ export function LoginForm({ next, notice }: { next: string | null; notice: 'conf
         <Field label="Password" htmlFor="password">
           <Input id="password" name="password" type="password" autoComplete="current-password" required />
         </Field>
+        <p className="-mt-2 mb-4 text-right text-sm"><Link href="/forgot-password">Forgot password?</Link></p>
         <Button block type="submit" disabled={pending}>{pending ? 'Please wait…' : 'Log in'}</Button>
       </form>
       <p className="mt-4 text-center text-sm text-muted">

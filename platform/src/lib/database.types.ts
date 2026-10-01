@@ -311,6 +311,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"reset_code_failures": {
+                  Row: {
+                    "at": string,"email": string,"id": number
+                  }
+                  Insert: {
+                    "at"?: string,"email": string,"id"?: never
+                  }
+                  Update: {
+                    "at"?: string,"email"?: string,"id"?: never
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"restaurant_payment_accounts": {
                   Row: {
                     "bank_summary": string,"charges_enabled": boolean,"details_submitted": boolean,"payouts_enabled": boolean,"restaurant_id": number,"stripe_account_id": string | null,"updated_at": string

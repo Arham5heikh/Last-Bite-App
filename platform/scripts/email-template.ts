@@ -1,12 +1,13 @@
-// Installs the branded sign-up email (supabase/templates/confirmation.html) in a Supabase project on
-// supabase.com. Usage: npm run email:template
+// Installs the branded emails in a Supabase project on supabase.com: sign-up confirmation
+// (supabase/templates/confirmation.html) and the password reset code (supabase/templates/recovery.html).
+// Usage: npm run email:template
 //
 // Email apps load the logo from a public web address. The template points at the site's own
 // /assets/email-logo.png, which only works once the site is online, so this uploads the logo to a public
-// "brand" storage bucket in the project and uses that address instead. Then it sets the "Confirm signup"
-// subject and body through the Supabase Management API, with a personal access token: SUPABASE_ACCESS_TOKEN
-// in .env.local, or the one `npx supabase login` saved. Without a token it writes confirm-signup-email.html
-// to paste into the dashboard by hand. The local Supabase stack (npm run db:start) uses the template
+// "brand" storage bucket in the project and uses that address instead. Then it sets the "Confirm signup" and
+// "Reset password" subjects and bodies through the Supabase Management API, with a personal access token:
+// SUPABASE_ACCESS_TOKEN in .env.local, or the one `npx supabase login` saved. Without a token it writes
+// confirm-signup-email.html and reset-password-email.html to paste into the dashboard by hand. The local Supabase stack (npm run db:start) uses the template
 // directly, through supabase/config.toml.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -24,8 +25,11 @@ const db = createClient(url, key, { auth: { persistSession: false, autoRefreshTo
 
 const BUCKET = 'brand';
 const LOGO = 'email-logo.png';
-const OUT = 'confirm-signup-email.html';
-const SUBJECT = 'Confirm your email for Last Bite 🥡';
+// Dashboard name, Management API key, template file, subject, and the file written for pasting by hand.
+const EMAILS = [
+  { name: 'Confirm signup', key: 'confirmation', file: 'confirmation.html', subject: 'Confirm your email for Last Bite 🥡', out: 'confirm-signup-email.html' },
+  { name: 'Reset password', key: 'recovery', file: 'recovery.html', subject: 'Your Last Bite password reset code', out: 'reset-password-email.html' },
+];
 
 async function main() {
   const bucket = await db.storage.getBucket(BUCKET);
@@ -39,7 +43,7 @@ async function main() {
   if (upload.error) throw new Error(`upload the logo: ${upload.error.message}`);
   const logoUrl = db.storage.from(BUCKET).getPublicUrl(LOGO).data.publicUrl;
 
-  const html = fs.readFileSync('supabase/templates/confirmation.html', 'utf8').replaceAll('{{ .SiteURL }}/assets/email-logo.png', logoUrl);
+  const html = (file: string) => fs.readFileSync(`supabase/templates/${file}`, 'utf8').replaceAll('{{ .SiteURL }}/assets/email-logo.png', logoUrl);
   console.log(`Logo uploaded: ${logoUrl}`);
 
   const ref = /^https:\/\/([a-z0-9]+)\.supabase\.co/.exec(url!)?.[1];
@@ -48,11 +52,15 @@ async function main() {
     const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/config/auth`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mailer_subjects_confirmation: SUBJECT, mailer_templates_confirmation_content: html }),
+      body: JSON.stringify(Object.fromEntries(EMAILS.flatMap((e) => [
+        [`mailer_subjects_${e.key}`, e.subject],
+        [`mailer_templates_${e.key}_content`, html(e.file)],
+      ]))),
     });
     if (res.ok) {
-      console.log(`Installed the "Confirm signup" email in project ${ref}. New sign-ups get the Last Bite email from now on.
-The button links to your Site URL (Authentication → URL Configuration), so keep that set to your site's address.`);
+      console.log(`Installed the ${EMAILS.map((e) => `"${e.name}"`).join(' and ')} emails in project ${ref}.
+The sign-up button links to your Site URL (Authentication → URL Configuration), so keep that set to your site's address.
+Password resets now email a 6-digit code (keep Authentication → Emails → "Email OTP Length" at 6).`);
       return;
     }
     console.log(`Couldn't install it automatically (${res.status}: ${(await res.text()).slice(0, 200)}).`);
@@ -64,11 +72,13 @@ The button links to your Site URL (Authentication → URL Configuration), so kee
 a token at https://supabase.com/dashboard/account/tokens and add SUPABASE_ACCESS_TOKEN=... to .env.local, then run this again.`);
   }
 
-  fs.writeFileSync(OUT, html);
-  console.log(`Or paste it by hand: wrote ${OUT}.
-  1. Supabase dashboard → Authentication → Emails → "Confirm signup".
-  2. Subject:  ${SUBJECT}
-  3. Body: switch to the source (<>) view, delete what is there, and paste the whole of ${OUT}. Save.`);
+  for (const e of EMAILS) {
+    fs.writeFileSync(e.out, html(e.file));
+    console.log(`Or paste it by hand: wrote ${e.out}.
+  1. Supabase dashboard → Authentication → Emails → "${e.name}".
+  2. Subject:  ${e.subject}
+  3. Body: switch to the source (<>) view, delete what is there, and paste the whole of ${e.out}. Save.`);
+  }
 }
 
 // A personal access token: SUPABASE_ACCESS_TOKEN, or the file `npx supabase login` writes when it can't use the

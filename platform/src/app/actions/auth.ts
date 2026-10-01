@@ -1,6 +1,6 @@
 'use server';
 
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { serverEnv } from '@/lib/env';
 import { requiredDocuments } from '@/lib/legal/documents';
@@ -9,7 +9,7 @@ import { homeFor } from '@/lib/constants';
 import { action, AppError, fromDb } from '@/lib/errors';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServer } from '@/lib/supabase/server';
-import { parse, signupSchema } from '@/lib/validate';
+import { emailSchema, parse, passwordSchema, signupSchema } from '@/lib/validate';
 import { z } from 'zod';
 
 async function requestInfo() {
@@ -81,6 +81,26 @@ export async function signUp(input: unknown) {
   });
 }
 
+type ServerClient = Awaited<ReturnType<typeof supabaseServer>>;
+
+// The signed-in user's profile if the account may be used; otherwise signs them out and explains why.
+async function activeProfile(supabase: ServerClient, userId: string) {
+  const { data: profile } = await supabase.from('profiles').select('role, status, suspended_until').eq('id', userId).single();
+  if (profile?.status === 'suspended' && profile.suspended_until && new Date(profile.suspended_until) <= new Date()) {
+    // The suspension is over (the sweep job normally reactivates the account first).
+    await supabaseAdmin().from('profiles').update({ status: 'active', suspended_until: null }).eq('id', userId);
+    profile.status = 'active';
+  }
+  if (!profile || profile.status !== 'active') {
+    await supabase.auth.signOut();
+    const until = profile?.status === 'suspended' && profile.suspended_until
+      ? ` until ${new Date(profile.suspended_until).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: serverEnv.timeZone })}`
+      : '';
+    throw new AppError(403, `This account has been suspended${until}. Contact Last Bite support for help.`);
+  }
+  return profile;
+}
+
 const loginSchema = z.object({ login: z.string().trim().min(1, 'Enter your email or user name.'), password: z.string().min(1, 'Enter your password.') });
 
 // Log in with an email address or a user name.
@@ -100,19 +120,7 @@ export async function signIn(input: unknown) {
       if (/not confirmed/i.test(error.message)) throw new AppError(403, 'Please confirm your email address first. Check your inbox for the link.');
       throw new AppError(401, 'Email/user name or password is incorrect.');
     }
-    const { data: profile } = await supabase.from('profiles').select('role, status, suspended_until').eq('id', data.user.id).single();
-    if (profile?.status === 'suspended' && profile.suspended_until && new Date(profile.suspended_until) <= new Date()) {
-      // The suspension is over (the sweep job normally reactivates the account first).
-      await supabaseAdmin().from('profiles').update({ status: 'active', suspended_until: null }).eq('id', data.user.id);
-      profile.status = 'active';
-    }
-    if (!profile || profile.status !== 'active') {
-      await supabase.auth.signOut();
-      const until = profile?.status === 'suspended' && profile.suspended_until
-        ? ` until ${new Date(profile.suspended_until).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: serverEnv.timeZone })}`
-        : '';
-      throw new AppError(403, `This account has been suspended${until}. Contact Last Bite support for help.`);
-    }
+    const profile = await activeProfile(supabase, data.user.id);
     return { next: homeFor(profile.role) };
   });
 }
@@ -156,5 +164,85 @@ export async function acceptUpdatedTerms(accepted: Record<string, string>) {
     const err = fromDb((await supabase.rpc('accept_terms', { p_accepted: accepted, p_ip: ip, p_user_agent: userAgent })).error);
     if (err) throw err;
     return null;
+  });
+}
+
+// ---------------------------------------------------------------- password reset
+// 1) requestPasswordReset emails a 6-digit code (Supabase "Reset password" template, {{ .Token }}).
+// 2) verifyResetCode checks it, which signs the user in, and sets a short-lived cookie.
+// 3) setNewPassword saves the new password; it only works with that cookie, so a normal session alone
+//    can't change the password without the current one.
+
+const RESET_COOKIE = 'lb_password_reset';
+const RESET_WINDOW_MINUTES = 15;
+const MAX_WRONG_CODES = 5; // per email address in RESET_WINDOW_MINUTES
+
+// The answer is the same whether or not an account uses the address, so it can't be used to look up accounts.
+export async function requestPasswordReset(input: unknown) {
+  return action(async () => {
+    const { email } = parse(z.object({ email: emailSchema }), input);
+    const supabase = await supabaseServer();
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error?.status === 429) throw new AppError(429, 'A code was sent very recently. Please wait a minute and try again.');
+    if (error) console.error('password reset email:', error.message);
+    return null;
+  });
+}
+
+const codeSchema = z.object({
+  email: emailSchema,
+  code: z.string().trim().regex(/^\d{6}$/, 'Enter the 6-digit code from the email.'),
+});
+
+export async function verifyResetCode(input: unknown) {
+  return action(async () => {
+    const { email, code } = parse(codeSchema, input);
+    const admin = supabaseAdmin();
+    const since = new Date(Date.now() - RESET_WINDOW_MINUTES * 60_000).toISOString();
+    const { count } = await admin.from('reset_code_failures').select('id', { count: 'exact', head: true }).eq('email', email).gte('at', since);
+    if ((count ?? 0) >= MAX_WRONG_CODES) {
+      throw new AppError(429, `Too many incorrect codes. Please wait ${RESET_WINDOW_MINUTES} minutes and request a new code.`);
+    }
+    const supabase = await supabaseServer();
+    const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: 'recovery' });
+    if (error || !data.user) {
+      if (error?.status === 429) throw new AppError(429, 'Too many attempts. Please wait a few minutes and try again.');
+      if (error && /banned/i.test(error.message)) throw new AppError(403, 'This account has been suspended. Contact Last Bite support for help.');
+      await admin.from('reset_code_failures').insert({ email });
+      await admin.from('reset_code_failures').delete().lt('at', new Date(Date.now() - 86_400_000).toISOString());
+      throw new AppError(400, 'That code is incorrect or has expired. Check the latest email, or request a new code.');
+    }
+    await admin.from('reset_code_failures').delete().eq('email', email);
+    await activeProfile(supabase, data.user.id);
+    (await cookies()).set(RESET_COOKIE, data.user.id, {
+      httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: RESET_WINDOW_MINUTES * 60,
+    });
+    return null;
+  });
+}
+
+const newPasswordSchema = z.object({ password: passwordSchema, confirm: z.string() })
+  .refine((v) => v.password === v.confirm, { message: 'The passwords do not match.' });
+
+export async function setNewPassword(input: unknown) {
+  return action(async () => {
+    const { password } = parse(newPasswordSchema, input);
+    const jar = await cookies();
+    const supabase = await supabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || jar.get(RESET_COOKIE)?.value !== user.id) {
+      throw new AppError(401, 'Your reset session has expired. Please request a new code.');
+    }
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      if (/different from the old|same/i.test(error.message)) throw new AppError(400, 'Please choose a password different from your current one.');
+      if (/weak|length|characters/i.test(error.message)) throw new AppError(400, error.message);
+      throw new AppError(400, 'We could not update your password. Please request a new code and try again.');
+    }
+    jar.delete(RESET_COOKIE);
+    // Anyone else signed in to this account (e.g. on another device) is signed out.
+    await supabase.auth.signOut({ scope: 'others' });
+    const profile = await activeProfile(supabase, user.id);
+    return { next: homeFor(profile.role) };
   });
 }
