@@ -59,7 +59,7 @@
     "typescript": "^5",
     "vitest": "^5.0.2"
   },
-  "description": "Last Bite: rescue surplus restaurant food around greater Seattle.",
+  "description": "Last Bite: rescue surplus restaurant food around St. John's, Newfoundland and Labrador.",
   "engines": {
     "node": ">=20.9"
   }
