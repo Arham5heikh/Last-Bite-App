@@ -1,12 +1,13 @@
-/**
- * Supabase Browser Client configuration for Next.js 15
- */
+'use client';
 
-export const getSupabaseConfig = () => {
-  const url = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SUPABASE_URL) || 
-              (typeof window !== 'undefined' && (window as unknown as { env?: Record<string, string> }).env?.NEXT_PUBLIC_SUPABASE_URL) || 
-              'https://mock-lastbite-supabase.supabase.co';
-  const anonKey = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY) || 
-                  'mock-anon-key-last-bite-production';
-  return { url, anonKey };
-};
+import { createBrowserClient } from '@supabase/ssr';
+import type { Database } from '@/lib/database.types';
+import { publicEnv } from '@/lib/env';
+
+let client: ReturnType<typeof createBrowserClient<Database>> | undefined;
+
+// One Supabase client per browser tab. Queries run as the signed-in user, so RLS applies.
+export function supabaseBrowser() {
+  client ??= createBrowserClient<Database>(publicEnv.supabaseUrl, publicEnv.supabaseKey);
+  return client;
+}
