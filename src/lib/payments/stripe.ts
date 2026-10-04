@@ -35,7 +35,7 @@ export function createStripeProvider(secretKey: string, api?: { host: string; po
     },
 
     async createSetupIntent(customerId) {
-      const intent = await stripe.setupIntents.create({ customer: customerId, payment_method_types: ['card'], usage: 'off_session' });
+      const intent = await stripe.setupIntents.create({ customer: customerId, allowed_payment_method_types: ['card'], usage: 'off_session' });
       return { clientSecret: intent.client_secret };
     },
 
@@ -60,7 +60,7 @@ export function createStripeProvider(secretKey: string, api?: { host: string; po
             amount: amountCents,
             currency: 'cad',
             capture_method: 'manual',
-            payment_method_types: ['card'],
+            allowed_payment_method_types: ['card'],
             customer: attached && customerId ? customerId : undefined,
             payment_method: paymentRef,
             confirm: true,
